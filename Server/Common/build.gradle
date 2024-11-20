@@ -1,0 +1,41 @@
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation(
+        libraries.spring_boot,
+        libraries.spring_boot_redis,
+        libraries.spring_boot_jpa,
+        // libraries.jasypt,
+        libraries.guava,
+        libraries.commons_lang3,
+        libraries.commons_pool2,
+        libraries.swagger,
+        libraries.spring_boot_json,
+        libraries.commons_io,
+    )
+
+    runtimeOnly(
+        libraries.mysql_connector,
+    )
+
+    testImplementation(
+        libraries.spring_boot_test
+    )
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

@@ -1,0 +1,46 @@
+
+app:
+  name: 'XtQuant交易网关-本地测试'
+  version: '0.1.1'
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 100
+          fetch_size: 20
+          order_inserts: true
+          order_updates: true
+          jdbc:
+            batch_versioned_data: true
+    defer-datasource-initialization: true
+    open-in-view: false
+
+  datasource:
+    url: 'jdbc:mysql://home03:3306/xtquant_v2?autoReconnect=true&allowMultiQueries=true'
+    username: 'xtquant'
+    password: '%your_password%'
+
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 2
+
+  # 默认redis
+  redis-default:
+    host: 'home03'
+    port: 6379
+    password: ''
+    database: 0
+    timeout: 6s
+    ssl: false

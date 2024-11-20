@@ -1,0 +1,48 @@
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.netflix.nebula.ospackage' version '11.8.1'
+}
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.netflix.nebula.ospackage'
+
+    apply from: '../libraries.gradle'
+
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/spring' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    group = 'chronika.xtquant'
+    version = '0.1.0'
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+}
+
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs = [
+                    "-Xlint:unchecked",
+                    "-Xlint:deprecation",
+            ]
+        }
+    }
+}
