@@ -3,11 +3,9 @@ package chronika.xtquant.common;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-// import org.springframework.context.annotation.ComponentScan;
 
 @EntityScan({"chronika.xtquant.common"})
 @EnableJpaRepositories({"chronika.xtquant.common"})
-// @ComponentScan({"chronika.juequant.core"})
 @SpringBootApplication
 public class DependOnApplicationTest {
 

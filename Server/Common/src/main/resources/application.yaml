@@ -44,3 +44,7 @@ spring:
     database: 0
     timeout: 6s
     ssl: false
+
+xtquant:
+  output-dir: 'E:\\GjQMT\\output'
+  order-queue: 'xtquant-order-list'

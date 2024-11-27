@@ -8,4 +8,6 @@ public class Constants {
     public static final int PriceDecimalPrecision = 3;
     public static final RoundingMode FinDecimalRoundingMode = RoundingMode.HALF_EVEN;
 
+    public static final int defaultPageSize = 10;
+
 }

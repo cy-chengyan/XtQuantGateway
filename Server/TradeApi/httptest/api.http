@@ -1,0 +1,166 @@
+
+
+### 下单
+POST {{baseurl}}/v1/order/async-place HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-01",
+    "data": {
+        "order": {
+            "orderRemark": "TEST-20241128-00006",
+            "accountId": "8881976116",
+            "stockCode": "000037.SZ",
+            "volume": 200,
+            "orderType": 23,
+            "priceType": 11,
+            "price": 8.36,
+            "memo": "test"
+        }
+    }
+}
+
+
+### 批量下单
+POST {{baseurl}}/v1/order/async-place-batch HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-02",
+    "data": {
+        "orders": [
+            {
+                "orderRemark": "TEST-20240416-00003",
+                "accountId": "8881976116",
+                "stockCode": "000737.SZ",
+                "volume": 200,
+                "orderType": 23,
+                "priceType": 11,
+                "price": 10.43
+            },
+            {
+                "orderRemark": "TEST-20240416-00004",
+                "accountId": "8881976116",
+                "stockCode": "000737.SZ",
+                "volume": 400,
+                "orderType": 23,
+                "priceType": 11,
+                "price": 10.42,
+                "comment": "test"
+            }
+        ]
+    }
+}
+
+
+### 撤单
+POST {{baseurl}}/v1/order/async-cancel HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-03",
+    "data": {
+        "order": {
+            "orderRemark": "TEST-20241128-00002",
+            "memo": "test"
+        }
+    }
+}
+
+
+### 批量撤单
+POST {{baseurl}}/v1/order/async-cancel-batch HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-04",
+    "data": {
+        "orders": [
+            {
+                "orderRemark": "TEST-20240416-00003",
+                "memo": "test"
+            },
+            {
+                "orderRemark": "TEST-20240415-00005",
+                "memo": "test"
+            }
+        ]
+    }
+}
+
+
+### 查询资产概况
+POST {{baseurl}}/v1/cash/current HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-05",
+    "data": {
+        "accountId": "8881976116"
+    }
+}
+
+
+### 查询当前持仓
+POST {{baseurl}}/v1/position/current HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-06",
+    "data": {
+        "accountId": "8881976116"
+    }
+}
+
+
+### 查询当前定单
+POST {{baseurl}}/v1/order/current HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-07",
+    "data": {
+        "accountId": "8881976116",
+        "status": [54]
+    }
+}
+
+### 查询定单
+POST {{baseurl}}/v1/order/list HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-08",
+    "data": {
+        "accountId": null,
+        "status": null,
+        "date": null,
+        "pageNum": 1,
+        "pageSize": 10
+    }
+}
+
+
+### 更新定单
+POST {{baseurl}}/v1/order/manual-update HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-08",
+    "data": {
+        "updateOrder": {
+            "sid": "31856",
+            "status": 5,
+            "memo": "手动测试"
+        }
+    }
+}

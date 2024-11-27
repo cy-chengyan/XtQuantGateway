@@ -62,7 +62,22 @@ public class DateUtil {
      * Get current date in yyyyMMdd format
      */
     public static Integer currentYmd() {
-        return Integer.parseInt(DateFormatUtils.format(new Date(), "yyyyMMdd"));
+        return Integer.parseInt(currentYmdStr());
+    }
+
+    public static String currentYmdStr() {
+        return DateFormatUtils.format(new Date(), "yyyyMMdd");
+    }
+
+    /**
+     * Get current time in HHmmss format
+     */
+    public static Integer currentHms() {
+        return Integer.parseInt(currentHmsStr());
+    }
+
+    public static String currentHmsStr() {
+        return DateFormatUtils.format(new Date(), "HHmmss");
     }
 
     /**

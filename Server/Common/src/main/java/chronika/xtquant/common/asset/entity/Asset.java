@@ -1,14 +1,19 @@
 package chronika.xtquant.common.asset.entity;
 
+import chronika.xtquant.common.infra.misc.Constants;
+import chronika.xtquant.common.infra.util.DateUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import chronika.xtquant.common.infra.util.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "t_asset")
 public class Asset {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Asset.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +40,12 @@ public class Asset {
 
     @Schema(description = "盈亏金额")
     private BigDecimal profit;
+
+    @Schema(description = "手动更新时间(毫秒)")
+    private Long manualUpdatedAt;
+
+    @Schema(description = "备注")
+    private String memo;
 
     //
     // getters and setters
@@ -104,6 +115,22 @@ public class Asset {
         this.profit = profit;
     }
 
+    public Long getManualUpdatedAt() {
+        return manualUpdatedAt;
+    }
+
+    public void setManualUpdatedAt(Long manualUpdatedAt) {
+        this.manualUpdatedAt = manualUpdatedAt;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
     //
     // Other methods
     //
@@ -122,12 +149,47 @@ public class Asset {
     }
 
     public String checkSum () {
-        return accountId + ';'
-            + date + ';'
-            + totalAsset + ';'
-            + marketValue + ';'
-            + cash + ';'
+        return accountId + ";"
+            + date + ";"
+            + totalAsset + ";"
+            + marketValue + ";"
+            + cash + ";"
             + withdrawableCash;
+    }
+
+    //
+    // Constructors
+    //
+
+    public Asset() {
+    }
+
+    public Asset(String[] feedLineFields) {
+        this.accountId = StringUtils.split(feedLineFields[0], "____")[4];
+        this.totalAsset = new BigDecimal(feedLineFields[1]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
+        this.cash = new BigDecimal(feedLineFields[2]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
+        this.marketValue = new BigDecimal(feedLineFields[3]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
+        this.profit = new BigDecimal(feedLineFields[6]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
+        this.date = Integer.parseInt(feedLineFields[7]);
+        this.withdrawableCash = new BigDecimal(feedLineFields[9]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
+    }
+
+    public static Asset createByFeedLine(String[] lineFields) {
+        if (lineFields == null || lineFields.length < 10) {
+            return null;
+        }
+
+        if (!lineFields[8].equals("登录成功")) {
+            log.info("Account status: {}", lineFields[8]);
+            return null;
+        }
+
+        try {
+            return new Asset(lineFields);
+        } catch (Exception e) {
+            log.error("Failed to create Position by fields: {}", e.getMessage());
+            return null;
+        }
     }
 
 }

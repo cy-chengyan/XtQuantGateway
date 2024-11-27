@@ -1,10 +1,6 @@
 
-jar {
-    enabled = true
-}
-
 bootJar {
-    enabled = false
+    launchScript()
 }
 
 configurations {
@@ -16,21 +12,20 @@ configurations {
 dependencies {
     implementation(
         libraries.spring_boot,
-        libraries.spring_boot_redis,
+        libraries.spring_boot_web,
+        libraries.spring_boot_valid,
         libraries.spring_boot_jpa,
-        // libraries.jasypt,
+        libraries.spring_boot_actuator,
+
         libraries.guava,
-        libraries.commons_lang3,
-        libraries.commons_pool2,
         libraries.swagger,
-        libraries.spring_boot_json,
-        libraries.commons_io,
-        libraries.opencsv,
+
+        project(":Common"),
     )
 
-    runtimeOnly(
-        libraries.mysql_connector,
-    )
+    // runtimeOnly(
+    //     libraries.mysql_connector,
+    // )
 
     testImplementation(
         libraries.spring_boot_test
@@ -39,4 +34,8 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootRun {
+    // jvmArgs = ["-Dnashorn.regexp.impl=jdk", "-Dnashorn.args=--language=es6"]
 }

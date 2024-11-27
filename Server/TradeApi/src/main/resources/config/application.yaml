@@ -1,0 +1,36 @@
+
+server:
+  address: "127.0.0.1"
+  port: 1090
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+logging:
+  pattern:
+    file: "[%d{yyyy-MM-dd HH:mm:ss}][%p][%file : %line] %m%n"
+    console: "[%d{yyyy-MM-dd HH:mm:ss}][%p] %m%n"
+  file.name: "./log/api.log"
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      base-path: "/actuator"
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true

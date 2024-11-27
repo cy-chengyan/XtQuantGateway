@@ -1,6 +1,5 @@
-package chronika.xtquant.common.service;
+package chronika.xtquant.common.asset;
 
-import chronika.xtquant.common.asset.AssetService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
