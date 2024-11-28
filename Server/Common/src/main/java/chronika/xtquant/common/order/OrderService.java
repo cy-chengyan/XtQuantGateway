@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(OrderService.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderService.class);
 
     private final OrderRepo orderRepo;
     private final OrderQueueService orderQueueService;
@@ -43,11 +43,13 @@ public class OrderService {
             } else { // 如果定单不是手动更新的, 则更新
                 order.setId(existed.getId());
                 if (!order.equals(existed)) { // 定单有变化才更新
+                    log.info("[定单更新]:{} >>> {}", existed, order);
                     orderRepo.save(order);
                 }
                 ret = order;
             }
         } else { // 如果定单不存在, 则保存
+            log.info("[定单新增]:{}", order);
             ret = orderRepo.save(order);
         }
         return ret;
@@ -103,13 +105,15 @@ public class OrderService {
         Map<String, OrderPlacingResult> newOrderResults = new HashMap<>(notExistsOrders.size());
         List<Order> saveOrders = Order.createByNewOrders(notExistsOrders);
         saveOrders.forEach(order -> {
+            String orderRemark = order.getOrderRemark();
             OrderPlacingResult result;
             try {
+                log.info("[定单新增]:{}", order);
                 order = orderRepo.save(order);
             } catch (Exception e) {
-                logger.error("Failed to save order: {}", order, e);
-                result = OrderPlacingResult.failed(order.getOrderRemark(), "Failed to save order");
-                newOrderResults.put(order.getOrderRemark(), result);
+                log.error("Failed to save order: {}", orderRemark, e);
+                result = OrderPlacingResult.failed(orderRemark, "Failed to save order");
+                newOrderResults.put(orderRemark, result);
                 return;
             }
 
@@ -118,15 +122,16 @@ public class OrderService {
                 order.setOrderStatus(Order.ORDER_STATUS_JUNK);
                 order.setErrorMsg("发送定单到消息队列失败");
                 try {
+                    log.info("[发送新定单到队列失败, 转而变废单]:{}", order);
                     orderRepo.save(order);
                 } catch (Exception e) {
-                    logger.error("[严重错误]向消息队列发送新定单失败后, 修改定单状态失败, {}", order, e);
+                    log.error("[严重错误]向消息队列发送新定单失败后, 修改定单状态失败, {}", order, e);
                 }
-                result = OrderPlacingResult.failed(order.getOrderRemark(), "Failed to send order to queue");
+                result = OrderPlacingResult.failed(orderRemark, "Failed to send order to queue");
             } else {
-                result = OrderPlacingResult.success(order.getOrderRemark());
+                result = OrderPlacingResult.success(orderRemark);
             }
-            newOrderResults.put(order.getOrderRemark(), result);
+            newOrderResults.put(orderRemark, result);
         });
 
         // 按照请求的顺序返回结果
@@ -178,7 +183,7 @@ public class OrderService {
                     orderRepo.save(existed);
                     result = OrderPlacingResult.success(orderRemark);
                 } catch (Exception e) {
-                    logger.error("Failed to cancel order(ORDER_STATUS_LOCAL): {}", order, e);
+                    log.error("Failed to cancel order(ORDER_STATUS_LOCAL): {}", order, e);
                     result = OrderPlacingResult.failed(orderRemark, "Failed to cancel order(ORDER_STATUS_LOCAL)");
                 }
                 cancelOrderResults.put(orderRemark, result);

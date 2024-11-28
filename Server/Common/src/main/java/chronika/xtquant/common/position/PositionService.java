@@ -10,6 +10,8 @@ import java.util.List;
 @Service
 public class PositionService {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PositionService.class);
+
     private final PositionRepo positionRepo;
 
     @Autowired
@@ -26,11 +28,13 @@ public class PositionService {
             } else {
                 position.setId(existed.getId());
                 if (!position.equals(existed)) {
+                    log.info("[持仓更新]:{} >>> {}", existed, position);
                     positionRepo.save(position);
                 }
                 ret = position;
             }
         } else {
+            log.info("[持仓新增]:{}", position);
             ret = positionRepo.save(position);
         }
         return ret;

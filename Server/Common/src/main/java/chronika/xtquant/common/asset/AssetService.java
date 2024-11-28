@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AssetService {
 
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AssetService.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AssetService.class);
 
     private final AssetRepo assetRepo;
 
@@ -26,11 +26,13 @@ public class AssetService {
             } else {
                 asset.setId(existed.getId());
                 if (!asset.equals(existed)) {
+                    log.info("[资产更新]:{} >>> {}", existed, asset);
                     assetRepo.save(asset);
                 }
                 ret = asset;
             }
         } else {
+            log.info("[资产新增]:{}", asset);
             ret = assetRepo.save(asset);
         }
 

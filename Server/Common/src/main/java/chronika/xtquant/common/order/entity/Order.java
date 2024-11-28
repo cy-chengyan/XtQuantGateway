@@ -304,7 +304,7 @@ public class Order {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Asset other)) {
+        if (!(obj instanceof Order other)) {
             return false;
         }
         return this.checkSum().equals(other.checkSum());
