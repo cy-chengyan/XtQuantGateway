@@ -218,9 +218,9 @@ public class Position {
         this.onRoadVolume = Long.parseLong(feedLineFields[5]);
         this.frozenVolume = Long.parseLong(feedLineFields[6]);
         this.yesterdayVolume = Long.parseLong(feedLineFields[7]);
-        this.openPrice = new BigDecimal(feedLineFields[8]).setScale(Constants.PriceDecimalPrecision, Constants.FinDecimalRoundingMode);
-        this.marketValue = new BigDecimal(feedLineFields[9]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
-        this.profit = new BigDecimal(feedLineFields[10]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
+        this.openPrice = feedLineFields[8].isEmpty() ? BigDecimal.ZERO : new BigDecimal(feedLineFields[8]).setScale(Constants.PriceDecimalPrecision, Constants.FinDecimalRoundingMode);
+        this.marketValue = feedLineFields[9].isEmpty() ? BigDecimal.ZERO : new BigDecimal(feedLineFields[9]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
+        this.profit = feedLineFields[10].isEmpty() ? BigDecimal.ZERO : new BigDecimal(feedLineFields[10]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
     }
 
     public static Position createByFeedLine(String[] lineFields) {
@@ -231,7 +231,7 @@ public class Position {
         try {
             return new Position(lineFields);
         } catch (Exception e) {
-            log.error("Failed to create Position by fields: {}", e.getMessage());
+            log.error("Failed to create Position by fields: {}", e.getMessage(), e);
             return null;
         }
     }

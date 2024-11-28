@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EntityScan({"chronika.xtquant.common"})
 @EnableJpaRepositories({"chronika.xtquant.common"})
-@ComponentScan({"chronika.xtquant.tradeapi", "chronika.xtquant.common"})
+@ComponentScan({"chronika.xtquant.tradeapi", "chronika.xtquant.common", "chronika.xtquant.feedparser"})
 @SpringBootApplication
 public class Main {
 
