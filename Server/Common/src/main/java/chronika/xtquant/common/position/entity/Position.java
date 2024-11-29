@@ -1,6 +1,5 @@
 package chronika.xtquant.common.position.entity;
 
-import chronika.xtquant.common.asset.entity.Asset;
 import chronika.xtquant.common.infra.misc.Constants;
 import chronika.xtquant.common.infra.util.DateUtil;
 import chronika.xtquant.common.infra.util.JsonUtil;

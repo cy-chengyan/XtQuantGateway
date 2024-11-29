@@ -176,8 +176,9 @@ public class OrderService {
                 continue;
             }
 
+            /* 以下逻辑直接放在 OrderPlacer 中处理, 这样可以保证只在 OrderPlacer 模块中队列串行处理, 避免并发问题
             // 如果状态是本地保存状态, 则直接修改状态
-            if (existed.getOrderStatus() == Order.ORDER_STATUS_LOCAL) {
+            if (existed.getOrderStatus() == Order.ORDER_STATUS_LOCAL_SAVED) {
                 existed.setOrderStatus(Order.ORDER_STATUS_CANCELED);
                 try {
                     orderRepo.save(existed);
@@ -188,7 +189,7 @@ public class OrderService {
                 }
                 cancelOrderResults.put(orderRemark, result);
                 continue;
-            }
+            }*/
 
             // 其它状态的定单, 往消息队列发送撤单消息
             if (!orderQueueService.sendCancelOrder(existed)) {

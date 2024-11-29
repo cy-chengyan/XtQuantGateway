@@ -94,7 +94,7 @@ create table t_order (
     `stock_code`          char(9)        not null    comment '股票代码',
     `order_id`            bigint             null    comment '定单编号',
     `order_sys_id`        varchar(32)        null    comment '委托编号(柜台合同编号)',
-    `order_time`          int                null    comment '报单时间, format: HHMMSS',
+    `order_time`          char(6)            null    comment '报单时间, format: HHMMSS',
     `order_type`          tinyint        not null    comment '定单类型, 见字典项"定单类型"',
     `order_volume`        bigint         not null    comment '定单数量',
     `price_type`          tinyint        not null    comment '定单价格类型, 见字典项"价格类型"',

@@ -1,6 +1,5 @@
 package chronika.xtquant.common.order.entity;
 
-import chronika.xtquant.common.asset.entity.Asset;
 import chronika.xtquant.common.infra.misc.Constants;
 import chronika.xtquant.common.infra.util.DateUtil;
 import chronika.xtquant.common.infra.util.JsonUtil;
@@ -23,9 +22,10 @@ public class Order {
     public static final int PRICE_TYPE_LATEST = 5;
     public static final int PRICE_TYPE_LIMIT = 11;
 
-    public static final int ORDER_STATUS_LOCAL = -1; // 保存在本地
-    public static final int ORDER_STATUS_LOCAL_SUBMITTING = -2; // 本地提交中(正在往miniQMT提交)
-    public static final int ORDER_STATUS_LOCAL_CANCELING = -3; // 本地撤单中(正在往miniQMT提交)
+    public static final int ORDER_STATUS_LOCAL_SAVED = -1; // 保存在本地
+    public static final int ORDER_STATUS_LOCAL_SUBMIT_FAILED = -2; // 本地向QMT下单提交失败
+    public static final int ORDER_STATUS_LOCAL_SUBMITTING = -3; // 本地正在向QMT下单中
+    public static final int ORDER_STATUS_LOCAL_SUBMIT_CANCELING = -4; // 本地正在向QMT提交撤单中
 
     public static final int ORDER_STATUS_UNKNOWN = 255; // 未知
     public static final int ORDER_STATUS_UNREPORTED = 48; // 未报
@@ -66,7 +66,7 @@ public class Order {
     private String orderSysId;
 
     @Schema(description = "报单时间, format: HHMMSS")
-    private int orderTime;
+    private String orderTime;
 
     @Schema(description = "定单类型")
     private int orderType;
@@ -110,6 +110,7 @@ public class Order {
     private Long manualUpdatedAt;
 
     @Schema(description = "备注")
+    @Column(name = "`memo`", updatable = false)
     private String memo;
 
     //
@@ -173,11 +174,11 @@ public class Order {
         this.orderSysId = orderSysId;
     }
 
-    public int getOrderTime() {
+    public String getOrderTime() {
         return orderTime;
     }
 
-    public void setOrderTime(int orderTime) {
+    public void setOrderTime(String orderTime) {
         this.orderTime = orderTime;
     }
 
@@ -333,7 +334,7 @@ public class Order {
         this.price = new BigDecimal(feedLineFields[5]).setScale(Constants.PriceDecimalPrecision, Constants.FinDecimalRoundingMode);
         this.orderVolume = Long.parseLong(feedLineFields[6]);
         this.date = Integer.parseInt(feedLineFields[7]);
-        this.orderTime = Integer.parseInt(feedLineFields[8]);
+        this.orderTime = StringUtils.right("000000" + feedLineFields[8], 6);
         this.orderSysId = feedLineFields[9];
         this.orderStatus = parseOrderStatus(feedLineFields[10]);
         this.tradedVolume = Long.parseLong(feedLineFields[11]);
@@ -365,12 +366,12 @@ public class Order {
         order.stockCode = newOrder.getStockCode();
         order.orderType = newOrder.getOrderType();
         order.priceType = newOrder.getPriceType();
-        order.orderStatus = Order.ORDER_STATUS_LOCAL;
+        order.orderStatus = Order.ORDER_STATUS_LOCAL_SAVED;
         order.price = newOrder.getPrice();
         order.orderVolume = newOrder.getOrderVolume();
         order.memo = newOrder.getMemo();
 
-        order.orderTime = DateUtil.currentHms();
+        order.orderTime = DateUtil.currentHmsStr();
         order.tradedVolume = 0L;
         order.tradedPrice = BigDecimal.ZERO;
         order.canceledVolume = 0L;

@@ -9,9 +9,6 @@ public class CancelOrder {
     @NotBlank
     private String orderRemark;
 
-    @Schema(description = "备注说明, 不需要时可给空字符串", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    private String memo;
-
     //
     // Getters and Setters
     //
@@ -22,14 +19,6 @@ public class CancelOrder {
 
     public void setOrderRemark(String orderRemark) {
         this.orderRemark = orderRemark;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 
     //
