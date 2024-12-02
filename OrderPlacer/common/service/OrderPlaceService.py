@@ -41,17 +41,17 @@ class OrderPlaceService:
 
         orderId = None
         try:
-            logging.info(f'将定单(orderRemark)提交到QMT')
+            logging.info(f'将定单({orderRemark})提交到QMT')
             r = self.__xtTradeService.placeOrder(accountId=order.accountId, stockCode=order.stockCode, orderType=order.orderType,
                                                 orderVolume=order.orderVolume, priceType=order.priceType, price=order.price,
                                                 strategyName=order.strategyName, orderRemark=order.orderRemark)
             orderId = r.get('orderId')
-            logging.info(f'下单({orderRemark})成功, QMT返回的订单ID为:{orderId}')
+            logging.info(f'将定单({orderRemark})提交到QMT成功, QMT返回的订单ID为:{orderId}')
         except Exception as e:
             logging.error(f'下单({orderRemark})出错:{repr(e)}')
 
         if orderId is None or orderId < 0:
-            logging.error(f'下单({orderRemark})失败,QMT返回的订单ID为:{orderId}')
+            logging.error(f'下单({orderRemark})失败, QMT返回的订单ID为:{orderId}')
             logging.info(f'将定单({orderRemark})状态更新为:本地提交失败')
             try:
                 self.__orderRepo.updateOrderStatus(orderRemark, Order.ORDER_STATUS_LOCAL_SUBMIT_FAILED)
@@ -121,7 +121,8 @@ class OrderPlaceService:
 
 
     def run(self):
-        while DateUtil.curHmsInt(zoneStr='Asia/Shanghai') < 150100:
+        # while DateUtil.curHmsInt(zoneStr='Asia/Shanghai') < 150100:
+        while True:
             raw = self.__redis.brpop(self.__taskQueueName, timeout=1)
             if raw is None:
                 continue
