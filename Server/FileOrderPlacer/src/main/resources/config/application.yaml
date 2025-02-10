@@ -1,0 +1,28 @@
+
+server:
+  address: "127.0.0.1"
+  port: 10090
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+
+logging:
+  pattern:
+    file: "[%d{yyyy-MM-dd HH:mm:ss}][%p][%file : %line] %m%n"
+    console: "[%d{yyyy-MM-dd HH:mm:ss}][%p] %m%n"
+  file.name: "./log/OrderPlacer.log"
+
+management:
+  endpoints:
+    web:
+      base-path: "/actuator"
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+
+xtquant:
+  order-dir: 'D:\\request'
+  order-tmp-dir: 'D:\\request-tmp'

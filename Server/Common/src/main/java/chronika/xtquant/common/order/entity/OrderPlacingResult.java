@@ -55,6 +55,14 @@ public class OrderPlacingResult {
         this.reason = reason;
     }
 
+    //
+    // Others
+    //
+
+    public boolean isSuccess() {
+        return result == OrderPlacingResultSuccess;
+    }
+
     public static OrderPlacingResult success(String sid) {
         return new OrderPlacingResult(sid, OrderPlacingResultSuccess, null);
     }

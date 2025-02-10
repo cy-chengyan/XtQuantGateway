@@ -64,8 +64,22 @@ public class OrderService {
         }
     }
 
+    public Order queryByOrderRemark(String orderRemark) {
+        return orderRepo.findByRemark(orderRemark);
+    }
+
     public boolean existsByOrderRemark(String orderRemark) {
         return orderRepo.existsByRemark(orderRemark);
+    }
+
+    public boolean updateOrderStatus(String orderRemark, int orderStatus) {
+        try {
+            orderRepo.updateStatusByRemark(orderRemark, orderStatus);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to update order status: orderRemark={}, to orderStatus={}", orderRemark, orderStatus, e);
+            return false;
+        }
     }
 
     public OrderPlacingResult asyncPlaceOrder(NewOrder order) {

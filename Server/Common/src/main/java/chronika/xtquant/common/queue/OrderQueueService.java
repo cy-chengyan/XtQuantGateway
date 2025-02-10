@@ -28,4 +28,8 @@ public class OrderQueueService {
         return orderQueueRepo.push(msg);
     }
 
+    public OrderQueueMsg blockReceiveOrder(long timeoutMills) {
+        return orderQueueRepo.blockPull(timeoutMills);
+    }
+
 }

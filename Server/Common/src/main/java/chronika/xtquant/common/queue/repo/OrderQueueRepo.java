@@ -25,7 +25,9 @@ public class OrderQueueRepo {
 
     public boolean push(OrderQueueMsg msg) {
         try {
-            redisTemplate.opsForList().leftPush(orderQueue, msg.serialize());
+            String raw = msg.serialize();
+            logger.info("Pushing order message: {}", raw);
+            redisTemplate.opsForList().leftPush(orderQueue, raw);
             return true;
         } catch (Exception e) {
             logger.error("Failed to push order message: {}", msg, e);
@@ -39,6 +41,7 @@ public class OrderQueueRepo {
             if (raw == null) {
                 return null;
             }
+            logger.info("Pulled order message: {}", raw);
             return OrderQueueMsg.deserialize(raw);
         } catch (Exception e) {
             logger.error("Failed to pull order message", e);

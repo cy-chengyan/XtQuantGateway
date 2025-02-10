@@ -1,2 +1,0 @@
-
-from .XtQuantClient import XtQuantClient

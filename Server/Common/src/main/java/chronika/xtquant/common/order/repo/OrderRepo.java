@@ -1,6 +1,7 @@
 package chronika.xtquant.common.order.repo;
 
 import chronika.xtquant.common.order.entity.Order;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -21,5 +22,9 @@ public interface OrderRepo extends CrudRepository<Order, Long> {
 
     @Query("select o from Order o where o.accountId = ?1 and o.date = ?2 order by o.id desc")
     List<Order> findOnDay(String accountId, int day);
+
+    @Modifying
+    @Query("update Order o set o.orderStatus = ?2 where o.orderRemark = ?1")
+    void updateStatusByRemark(String orderRemark, int status);
 
 }

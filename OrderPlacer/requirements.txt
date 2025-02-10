@@ -1,5 +1,0 @@
-# requirements.txt
-PyMySQL==1.1.0
-pytz
-requests
-redis

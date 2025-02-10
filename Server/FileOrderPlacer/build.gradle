@@ -1,0 +1,36 @@
+bootJar {
+    launchScript()
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation(
+        libraries.spring_boot,
+        libraries.spring_boot_web,
+        libraries.spring_boot_jpa,
+        libraries.spring_boot_actuator,
+
+        project(":Common"),
+    )
+
+    // runtimeOnly(
+    //     libraries.mysql_connector,
+    // )
+
+    testImplementation(
+        libraries.spring_boot_test
+    )
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+bootRun {
+    // jvmArgs = ["-Dnashorn.regexp.impl=jdk", "-Dnashorn.args=--language=es6"]
+}

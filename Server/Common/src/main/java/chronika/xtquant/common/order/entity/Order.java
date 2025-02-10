@@ -411,4 +411,34 @@ public class Order {
         }
     }
 
+    //
+    // Others
+    //
+
+    public String toOrderPlacingFileLine() {
+        // 格式: 投资备注,报单类型,报价方式,报单价格,证券代码,下单总量,策略名称,股东号
+        // 证券代码: 支持格式为“市场代码+证券代码”，如SH600000
+        String priceTypeStr = this.priceType == PRICE_TYPE_LATEST ? "1" : "3"; // 海通证券 "1" 代表最新价, "3" 代表指定价, 实际海通证券只支持指定价
+        String strategyNameStr = this.strategyName == null ? "" : this.strategyName;
+        return String.format("%s,%d,%s,%s,%s,%d,%s,%s\n",
+            orderRemark,
+            orderType,
+            priceTypeStr,
+            price.toPlainString(),
+            stockCode,
+            orderVolume,
+            strategyNameStr,
+            accountId
+        );
+    }
+
+    public String toOrderCancelFileLine() {
+        // 海通证券:
+        // 格式: 报单类型,撤单编号,市场
+        // 报单类型, cancel_sys或cancel_id
+        // 撤单编号, 当使用cancel_sys进行撤单时，此处填写合同编号；当使用cancel_id进行撤单时，此处填写委托编号（即订单编号）
+        // 市场,	可取 SZ,SH,BJ
+        return "cancel_id," + this.orderId;
+    }
+
 }

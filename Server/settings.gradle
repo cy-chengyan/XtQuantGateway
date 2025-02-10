@@ -2,3 +2,4 @@ rootProject.name = 'XtQuantGateway'
 
 include 'Common'
 include 'TradeApi'
+include 'FileOrderPlacer'
