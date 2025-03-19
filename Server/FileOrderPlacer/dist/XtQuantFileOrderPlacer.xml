@@ -1,0 +1,14 @@
+<service>
+  <id>XtQuantFileOrderPlacer</id>
+  <name>XtQuantFileOrderPlacer</name>
+  <description>XtQuant file order placer</description>
+  <executable>java</executable>
+  <startarguments>-Xms1G -Xmx1G -Dfile.encoding=UTF-8 -Dspring.config.location=%BASE%/config/ -Dspring.profiles.active=prod -jar "%BASE%\FileOrderPlacer-0.1.0.jar"</startarguments>
+  <log mode="roll-by-time">
+    <pattern>yyyyMMdd</pattern>
+  </log>
+  <logpath>%BASE%\log</logpath>
+  <startmode>Manual</startmode>
+  <stopexecutable>%BASE%\tools\curl.exe</stopexecutable>
+  <stoparguments>-X POST http://127.0.0.1:10090/api/actuator/shutdown</stoparguments>
+</service>

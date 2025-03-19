@@ -34,3 +34,7 @@ management:
   endpoint:
     shutdown:
       enabled: true
+
+xtquant:
+  # feed parsing interval in milliseconds
+  output-parsing-interval: 50

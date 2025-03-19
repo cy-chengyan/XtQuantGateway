@@ -14,6 +14,7 @@ dependencies {
         libraries.spring_boot_web,
         libraries.spring_boot_jpa,
         libraries.spring_boot_actuator,
+        libraries.commons_io,
 
         project(":Common"),
     )

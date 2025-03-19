@@ -3,6 +3,7 @@ package chronika.xtquant.feedparser;
 import chronika.xtquant.common.file.XtQuantOutputFileService;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,11 +13,14 @@ public class MiniQmtOutputFeedParser implements Runnable {
 
     private final XtQuantOutputFileService xtQuantOutputFileService;
     private final Thread thread;
+    private final Long parseInterval;
     private boolean loopFlag = true;
 
     @Autowired
-    MiniQmtOutputFeedParser(XtQuantOutputFileService xtQuantOutputFileService) {
+    MiniQmtOutputFeedParser(@Value("${xtquant.output-parsing-interval}") long parseInterval,
+                            XtQuantOutputFileService xtQuantOutputFileService) {
         this.xtQuantOutputFileService = xtQuantOutputFileService;
+        this.parseInterval = parseInterval;
         thread = new Thread(this);
         thread.start();
     }
@@ -39,7 +43,7 @@ public class MiniQmtOutputFeedParser implements Runnable {
         while (this.loopFlag) {
             try {
                 xtQuantOutputFileService.loadFeed();
-                Thread.sleep(1000L);
+                Thread.sleep(parseInterval);
                 // System.out.println("JqOutputFileLoader thread running");
             } catch (InterruptedException e) {
                 log.error("MiniQmtOutputFeedParser thread interrupted", e);

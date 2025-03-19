@@ -1,0 +1,80 @@
+
+# restful接口只是为了调用相关的接口，使本服务能够完美停止
+server:
+  address: "127.0.0.1"
+  port: 10090
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+
+logging:
+  pattern:
+    file: "[%d{yyyy-MM-dd HH:mm:ss}][%p][%file : %line] %m%n"
+    console: "[%d{yyyy-MM-dd HH:mm:ss}][%p] %m%n"
+  file.name: "./log/OrderPlacer.log"
+
+management:
+  endpoints:
+    web:
+      base-path: "/actuator"
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+
+app:
+  name: 'XtQuant文件单下单服务-本地测试'
+  version: '0.1.1'
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 100
+          fetch_size: 20
+          order_inserts: true
+          order_updates: true
+          jdbc:
+            batch_versioned_data: true
+    defer-datasource-initialization: true
+    open-in-view: false
+
+  datasource:
+    url: 'jdbc:mysql://home03:3306/xtquant_v2?autoReconnect=true&allowMultiQueries=true'
+    username: 'xtquant'
+    password: '%your_password%'
+
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 2
+
+  # 默认redis
+  redis-default:
+    host: 'home03'
+    port: 6379
+    password: ''
+    database: 0
+    timeout: 6s
+    ssl: false
+
+xtquant:
+  order-queue: 'xtquant-order-list-test'
+  order-dir: 'C:\\QmtFileOrder\\input'
+  order-tmp-dir: 'C:\\QmtFileOrder\\inputTmp'

@@ -6,11 +6,13 @@ import chronika.xtquant.common.order.OrderService;
 import chronika.xtquant.common.order.entity.Order;
 import chronika.xtquant.common.order.entity.OrderPlacingResult;
 import chronika.xtquant.common.queue.entity.OrderQueueMsg;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -159,12 +161,24 @@ public class XtQuantFileOrderService {
         Order firstOrder = orders.get(0);
         String fileNo;
         if (isCancelOrder) {
-            fileNo = DateUtil.currentMillSecond().toString(); // 撤单文件序号为当前时间戳
+            // 撤单文件序号为 cancel-原始订单号-时间戳(精确到毫秒)
+            fileNo = "cancel-" + firstOrder.getOrderRemark() + "-" + DateUtil.currentDatetimeStr("HHmmss-SSS");
         } else {
             fileNo = firstOrder.getOrderRemark(); // 将第一个定单的本地定单号当做文件序号
         }
         String accountId = firstOrder.getAccountId();
         return orderFilePrefix + accountId + "_" + accountType + "." + fileNo + ".txt";
+    }
+
+    private boolean moveOrderFileToDir(String fileTmpPath, String fileDestPath) {
+        try {
+            log.info("[下单/撤单]移动文件单: {} -> {}", fileTmpPath, fileDestPath);
+            Files.move(Paths.get(fileTmpPath), Paths.get(fileDestPath));
+            return true;
+        } catch (Exception e) {
+            log.error("[下单/撤单]移动文件单失败: {} -> {}", fileTmpPath, fileDestPath, e);
+            return false;
+        }
     }
 
     private List<OrderPlacingResult> filePlaceOrders(List<Order> orders) {
@@ -207,13 +221,22 @@ public class XtQuantFileOrderService {
             log.error("[下单]关闭文件单失败: {}", fileTmpPath, e);
         }
 
+        // touch 结束标识文件
+        String finFileTmpPath = fileTmpPath + ".fin";
+        try {
+            FileUtils.touch(new File(finFileTmpPath));
+        } catch (Exception e) {
+            log.error("[下单]创建结束标识文件失败: {}", finFileTmpPath, e);
+            return orders.stream()
+                .map(o -> OrderPlacingResult.failed(o.getOrderRemark(), "Create finish file failed"))
+                .toList();
+        }
+
         // 移动文件到 orderDirPath 目录
         String fileDestPath = orderDirPath + "/" + fileName;
-        try {
-            log.info("[下单]移动文件单: {} -> {}", fileTmpPath, fileDestPath);
-            Files.move(Paths.get(fileTmpPath), Paths.get(fileDestPath));
-        } catch (Exception e) {
-            log.error("[下单]移动文件单失败: {} -> {}", fileTmpPath, fileDestPath, e);
+        String finFileDestPath = fileDestPath + ".fin";
+        if (!moveOrderFileToDir(fileTmpPath, fileDestPath)
+            || !moveOrderFileToDir(finFileTmpPath, finFileDestPath)) {
             return orders.stream()
                 .map(o -> OrderPlacingResult.failed(o.getOrderRemark(), "Move order's file failed"))
                 .toList();
@@ -262,13 +285,22 @@ public class XtQuantFileOrderService {
             log.error("[撤单]关闭文件单失败: {}", fileTmpPath, e);
         }
 
+        // touch 结束标识文件
+        String finFileTmpPath = fileTmpPath + ".fin";
+        try {
+            FileUtils.touch(new File(finFileTmpPath));
+        } catch (Exception e) {
+            log.error("[撤单]创建结束标识文件失败: {}", finFileTmpPath, e);
+            return orders.stream()
+                .map(o -> OrderPlacingResult.failed(o.getOrderRemark(), "Create finish file failed"))
+                .toList();
+        }
+
         // 移动文件到 orderDirPath 目录
         String fileDestPath = orderDirPath + "/" + fileName;
-        try {
-            log.info("[撤单]移动文件单: {} -> {}", fileTmpPath, fileDestPath);
-            Files.move(Paths.get(fileTmpPath), Paths.get(fileDestPath));
-        } catch (Exception e) {
-            log.error("[撤单]移动文件单失败: {} -> {}", fileTmpPath, fileDestPath, e);
+        String finFileDestPath = fileDestPath + ".fin";
+        if (!moveOrderFileToDir(fileTmpPath, fileDestPath)
+            || !moveOrderFileToDir(finFileTmpPath, finFileDestPath)) {
             return orders.stream()
                 .map(o -> OrderPlacingResult.failed(o.getOrderRemark(), "Move order's file failed"))
                 .toList();

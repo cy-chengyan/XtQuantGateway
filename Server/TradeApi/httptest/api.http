@@ -9,14 +9,14 @@ Accept: application/json
     "reqId": "TEST-01",
     "data": {
         "order": {
-            "orderRemark": "TEST-20241129-00015",
-            "accountId": "8881976116",
+            "orderRemark": "9999998",
+            "accountId": "55924823",
             "stockCode": "000520.SZ",
-            "volume": 700,
+            "volume": 100,
             "orderType": 23,
             "priceType": 11,
-            "price": 4.75,
-            "memo": "第十二笔单子"
+            "price": 4.87,
+            "memo": "手动测试的单子"
         }
     }
 }
@@ -64,7 +64,7 @@ Accept: application/json
     "reqId": "TEST-03",
     "data": {
         "order": {
-            "orderRemark": "TEST-20241129-00012"
+            "orderRemark": "9999999"
         }
     }
 }

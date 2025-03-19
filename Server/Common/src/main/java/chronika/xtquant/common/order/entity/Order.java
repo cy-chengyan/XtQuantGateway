@@ -418,14 +418,15 @@ public class Order {
     public String toOrderPlacingFileLine() {
         // 格式: 投资备注,报单类型,报价方式,报单价格,证券代码,下单总量,策略名称,股东号
         // 证券代码: 支持格式为“市场代码+证券代码”，如SH600000
-        String priceTypeStr = this.priceType == PRICE_TYPE_LATEST ? "1" : "3"; // 海通证券 "1" 代表最新价, "3" 代表指定价, 实际海通证券只支持指定价
+        String priceTypeStr = this.priceType == PRICE_TYPE_LATEST ? "5" : "11";
+        String symbol = stockCode.substring(7) + stockCode.substring(0, 6); // 600000.SH => SH600000
         String strategyNameStr = this.strategyName == null ? "" : this.strategyName;
         return String.format("%s,%d,%s,%s,%s,%d,%s,%s\n",
             orderRemark,
             orderType,
             priceTypeStr,
             price.toPlainString(),
-            stockCode,
+            symbol,
             orderVolume,
             strategyNameStr,
             accountId
