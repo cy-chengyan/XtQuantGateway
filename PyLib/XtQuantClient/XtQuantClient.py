@@ -9,7 +9,7 @@ from XtQuantClient.model import Asset, Order, Position
 
 
 class XtQuantClient:
-    """JueQuant API客户端"""
+    """XtQuant API客户端"""
 
     def __init__(self, endpoint, timeout=10):
         """
@@ -218,10 +218,10 @@ class XtQuantClient:
 
 if __name__ == '__main__':
 
-    accountId = '8881976116'
-    date = 20250207
+    accountId = '55004763'
+    date = 20250211
 
-    client = XtQuantClient('http://192.168.7.177:1090/api')
+    client = XtQuantClient('http://172.23.171.157:1091/api')
 
     print(f'accountId: {accountId}')
     print('\ncurrent asset ------------------')
