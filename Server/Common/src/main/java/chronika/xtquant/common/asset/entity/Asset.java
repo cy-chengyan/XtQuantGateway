@@ -1,11 +1,10 @@
 package chronika.xtquant.common.asset.entity;
 
 import chronika.xtquant.common.infra.misc.Constants;
-import chronika.xtquant.common.infra.util.DateUtil;
+import chronika.xtquant.common.infra.util.BizUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import chronika.xtquant.common.infra.util.JsonUtil;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -165,7 +164,7 @@ public class Asset {
     }
 
     public Asset(String[] feedLineFields) {
-        this.accountId = StringUtils.split(feedLineFields[0], "____")[4];
+        this.accountId = BizUtil.parseAccountId(feedLineFields[0]);
         this.totalAsset = new BigDecimal(feedLineFields[1]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
         this.cash = new BigDecimal(feedLineFields[2]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
         this.marketValue = new BigDecimal(feedLineFields[3]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);

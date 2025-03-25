@@ -1,11 +1,11 @@
 package chronika.xtquant.common.position.entity;
 
 import chronika.xtquant.common.infra.misc.Constants;
+import chronika.xtquant.common.infra.util.BizUtil;
 import chronika.xtquant.common.infra.util.DateUtil;
 import chronika.xtquant.common.infra.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -209,7 +209,7 @@ public class Position {
     }
 
     public Position(String[] feedLineFields) {
-        this.accountId = StringUtils.split(feedLineFields[0], "____")[4];
+        this.accountId = BizUtil.parseAccountId(feedLineFields[0]);
         this.date = DateUtil.currentYmd();
         this.stockCode = feedLineFields[2] + "." + feedLineFields[1];
         this.volume = Long.parseLong(feedLineFields[3]);

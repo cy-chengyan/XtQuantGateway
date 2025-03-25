@@ -1,6 +1,7 @@
 package chronika.xtquant.common.order.entity;
 
 import chronika.xtquant.common.infra.misc.Constants;
+import chronika.xtquant.common.infra.util.BizUtil;
 import chronika.xtquant.common.infra.util.DateUtil;
 import chronika.xtquant.common.infra.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -327,7 +328,7 @@ public class Order {
     }
 
     public Order(String[] feedLineFields) {
-        this.accountId = StringUtils.split(feedLineFields[0], "____")[4];
+        this.accountId = BizUtil.parseAccountId(feedLineFields[0]);
         this.stockCode = feedLineFields[2] + "." + feedLineFields[1];
         this.orderType = feedLineFields[3].contains("买") ? ORDER_TYPE_STOCK_BUY : ORDER_TYPE_STOCK_SELL;
         this.priceType = feedLineFields[4].contains("限价") ? PRICE_TYPE_LIMIT : PRICE_TYPE_LATEST;
