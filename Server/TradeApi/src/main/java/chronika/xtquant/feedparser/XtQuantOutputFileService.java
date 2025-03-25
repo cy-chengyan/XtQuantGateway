@@ -1,7 +1,8 @@
-package chronika.xtquant.common.file;
+package chronika.xtquant.feedparser;
 
 import chronika.xtquant.common.asset.AssetService;
 import chronika.xtquant.common.asset.entity.Asset;
+import chronika.xtquant.common.file.XtQuantFeedFileReader;
 import chronika.xtquant.common.order.OrderService;
 import chronika.xtquant.common.order.entity.Order;
 import chronika.xtquant.common.position.PositionService;

@@ -46,7 +46,4 @@ spring:
     ssl: false
 
 xtquant:
-  output-dir: 'E:\\GjQMT\\output'
-  # 输出文件是否包含 finish 标识文件, 当为 true 时，数据解析完成后，会自动删除 finish 标识文件 以及 对应的数据文件
-  output-finish-flag: false
   order-queue: 'xtquant-order-list'

@@ -16,6 +16,7 @@ dependencies {
         libraries.spring_boot_valid,
         libraries.spring_boot_jpa,
         libraries.spring_boot_actuator,
+        libraries.commons_io,
 
         libraries.guava,
         libraries.swagger,

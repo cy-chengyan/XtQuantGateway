@@ -1,6 +1,5 @@
 package chronika.xtquant.feedparser;
 
-import chronika.xtquant.common.file.XtQuantOutputFileService;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

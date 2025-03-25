@@ -26,3 +26,4 @@ management:
 xtquant:
   order-dir: 'D:\\request'
   order-tmp-dir: 'D:\\request-tmp'
+  order-queue: 'xtquant-order-list'
