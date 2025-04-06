@@ -16,7 +16,7 @@ public class MiniQmtOutputFeedParser implements Runnable {
     private boolean loopFlag = true;
 
     @Autowired
-    MiniQmtOutputFeedParser(@Value("${xtquant.output-parsing-interval}") long parseInterval,
+    MiniQmtOutputFeedParser(@Value("${xtquant.feed-parsing-interval}") long parseInterval,
                             XtQuantOutputFileService xtQuantOutputFileService) {
         this.xtQuantOutputFileService = xtQuantOutputFileService;
         this.parseInterval = parseInterval;

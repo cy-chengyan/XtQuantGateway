@@ -9,13 +9,13 @@ Accept: application/json
     "reqId": "TEST-01",
     "data": {
         "order": {
-            "orderRemark": "9999998",
-            "accountId": "55924823",
-            "stockCode": "000520.SZ",
+            "orderRemark": "9999990",
+            "accountId": "620000308469",
+            "stockCode": "002069.SZ",
             "volume": 100,
-            "orderType": 23,
+            "orderType": 24,
             "priceType": 11,
-            "price": 4.87,
+            "price": 3.88,
             "memo": "手动测试的单子"
         }
     }
@@ -32,23 +32,24 @@ Accept: application/json
     "data": {
         "orders": [
             {
-                "orderRemark": "TEST-20240416-00003",
-                "accountId": "8881976116",
-                "stockCode": "000737.SZ",
+                "orderRemark": "9999992",
+                "accountId": "620000308469",
+                "stockCode": "002069.SZ",
+                "volume": 100,
+                "orderType": 24,
+                "priceType": 11,
+                "price": 3.97,
+                "memo": "手动测试的单子"
+            },
+            {
+                "orderRemark": "9999991",
+                "accountId": "620000308469",
+                "stockCode": "002069.SZ",
                 "volume": 200,
                 "orderType": 23,
                 "priceType": 11,
-                "price": 10.43
-            },
-            {
-                "orderRemark": "TEST-20240416-00004",
-                "accountId": "8881976116",
-                "stockCode": "000737.SZ",
-                "volume": 400,
-                "orderType": 23,
-                "priceType": 11,
-                "price": 10.42,
-                "comment": "test"
+                "price": 3.45,
+                "memo": "买入测试"
             }
         ]
     }
@@ -64,7 +65,7 @@ Accept: application/json
     "reqId": "TEST-03",
     "data": {
         "order": {
-            "orderRemark": "9999999"
+            "orderRemark": "9999993"
         }
     }
 }
@@ -80,11 +81,11 @@ Accept: application/json
     "data": {
         "orders": [
             {
-                "orderRemark": "TEST-20240416-00003",
+                "orderRemark": "9999992",
                 "memo": "test"
             },
             {
-                "orderRemark": "TEST-20240415-00005",
+                "orderRemark": "9999991",
                 "memo": "test"
             }
         ]
@@ -100,7 +101,7 @@ Accept: application/json
 {
     "reqId": "TEST-05",
     "data": {
-        "accountId": "8881976116"
+        "accountId": "620000308469"
     }
 }
 
