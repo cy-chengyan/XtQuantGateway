@@ -45,6 +45,15 @@ insert into t_dict (`type`, `k`, `v`) values (3, 57,  '废单');
 insert into t_dict (`type`, `k`, `v`) values (3, 255, '未知');
 insert into t_dict (`type`, `k`, `v`) values (3, -1,  '保存在本地');
 
+-- 服务状态表
+drop table if exists t_service_status;
+create table t_service_status (
+    `id`                varchar(32)    primary key comment '服务ID',
+    `status`            tinyint        not null    comment '状态, 1:正常, 2:异常',
+    `error_msg`         varchar(255)   null        comment '错误信息',
+    `updated_at`        timestamp      not null    comment '更新时间戳' default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='服务状态';
+
 -- 资金表
 drop table if exists t_asset;
 create table t_asset (

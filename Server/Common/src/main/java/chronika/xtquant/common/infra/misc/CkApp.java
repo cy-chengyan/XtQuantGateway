@@ -7,21 +7,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class CkApp {
 
-    private final String appName;
-    private final String appVersion;
+    private final String id;
+    private final String name;
+    private final String version;
 
     @Autowired
-    private CkApp(@Value("${app.name}") String appName, @Value("${app.version}") String appVersion) {
-        this.appName = appName;
-        this.appVersion = appVersion;
+    private CkApp(@Value("${app.id}") String appId, @Value("${app.name}") String appName, @Value("${app.version}") String appVersion) {
+        this.id = appId;
+        this.name = appName;
+        this.version = appVersion;
     }
 
-    public String getAppName() {
-        return appName;
+    public String getId() {
+        return id;
     }
 
-    public String getAppVersion() {
-        return appVersion;
+    public String getName() {
+        return name;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
 }

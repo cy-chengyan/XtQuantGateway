@@ -41,7 +41,7 @@ public class FileOrderPlacingThread implements Runnable {
 
         while (this.loopFlag) {
             try {
-                OrderQueueMsg msg = orderQueueService.blockReceiveOrder(1000L);
+                OrderQueueMsg msg = orderQueueService.blockReceiveOrder(100L);
                 if (msg != null) {
                     xtQuantFileOrderService.processOrderQueueMsg(msg);
                 }

@@ -3,6 +3,9 @@ package chronika.xtquant.feedparser;
 import chronika.xtquant.common.asset.AssetService;
 import chronika.xtquant.common.asset.entity.Asset;
 import chronika.xtquant.common.file.XtQuantFeedFileReader;
+import chronika.xtquant.common.gateway.ServiceStatusService;
+import chronika.xtquant.common.gateway.entity.ServiceStatus;
+import chronika.xtquant.common.infra.misc.CkApp;
 import chronika.xtquant.common.order.OrderService;
 import chronika.xtquant.common.order.entity.Order;
 import chronika.xtquant.common.position.PositionService;
@@ -21,6 +24,7 @@ public class XtQuantOutputFileService {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(XtQuantOutputFileService.class);
 
+    private final CkApp ckApp;
     private final AssetService assetService;
     private final PositionService positionService;
     private final OrderService orderService;
@@ -31,13 +35,18 @@ public class XtQuantOutputFileService {
     private final boolean feedFinishFlag;
     private final String feedRmDir; // 解析完成后, 删除文件前, 先将待删除的文件移动到该目录下, 以防止并发删除时, 其他线程正在取写该文件, 导致文件损坏
 
+    private ServiceStatus serviceStatusCache;
+    private ServiceStatusService serviceStatusService;
+
     @Autowired
     public XtQuantOutputFileService(@Value("${xtquant.feed-dir}") String xtQuantFeedDir,
                                     @Value("${xtquant.feed-finish-flag}") boolean feedFinishFlag,
                                     @Value("${xtquant.feed-rm-dir}") String feedRmDir,
+                                    CkApp ckApp,
                                     AssetService assetService,
                                     PositionService positionService,
-                                    OrderService orderService) {
+                                    OrderService orderService,
+                                    ServiceStatusService serviceStatusService) {
         if (xtQuantFeedDir != null) {
             xtQuantFeedDir = xtQuantFeedDir.trim();
         }
@@ -63,9 +72,13 @@ public class XtQuantOutputFileService {
             this.feedRmDir = null;
         }
 
+        this.ckApp = ckApp;
         this.assetService = assetService;
         this.positionService = positionService;
         this.orderService = orderService;
+
+        this.serviceStatusCache = null;
+        this.serviceStatusService = serviceStatusService;
     }
 
     // 解析出 feed 文件的路径
@@ -180,11 +193,16 @@ public class XtQuantOutputFileService {
             }
 
             Asset asset = Asset.createByFeedLine(line);
-            if (asset == null) {
-                continue;
+            if (asset != null) {
+                assetService.replace(asset);
             }
 
-            assetService.replace(asset);
+            ServiceStatus serviceStatus = ServiceStatus.createByFeedLine(ckApp.getId(), line);
+            if (this.serviceStatusCache == null
+                || !this.serviceStatusCache.equals(serviceStatus)) {
+                this.serviceStatusCache = serviceStatus;
+                this.serviceStatusService.save(serviceStatus);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 
 app:
+  id: 'LOCAL-TEST'
   name: 'XtQuant交易网关-本地测试'
   version: '0.1.1'
 
