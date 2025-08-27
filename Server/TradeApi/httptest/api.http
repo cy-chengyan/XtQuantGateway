@@ -1,4 +1,13 @@
 
+### 查询服务状态
+POST {{baseurl}}/v1/misc/service/status HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "reqId": "TEST-00"
+}
+
 
 ### 下单
 POST {{baseurl}}/v1/order/async-place HTTP/1.1

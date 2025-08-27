@@ -21,8 +21,7 @@ public interface PositionRepo extends CrudRepository<Position, Long> {
     @Query("select p from Position p where"
         + " (?1 is null or p.accountId = ?1)"
         + " and (?2 is null or p.date = ?2)"
-        + " and (?3 is null or p.stockCode = ?3)"
-        + " order by p.id desc")
+        + " and (?3 is null or p.stockCode = ?3)")
     Page<Position> find(String accountId, Integer date, String stockCode, Pageable pageable);
 
 }

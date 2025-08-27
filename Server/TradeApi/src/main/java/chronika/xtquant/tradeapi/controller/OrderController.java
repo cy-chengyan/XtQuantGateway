@@ -1,21 +1,23 @@
 package chronika.xtquant.tradeapi.controller;
 
-import chronika.xtquant.common.infra.enums.CkError;
+import chronika.xtquant.common.infra.util.BizUtil;
 import chronika.xtquant.common.order.OrderService;
-import chronika.xtquant.common.order.entity.CancelOrder;
-import chronika.xtquant.common.order.entity.NewOrder;
-import chronika.xtquant.common.order.entity.Order;
-import chronika.xtquant.common.order.entity.OrderPlacingResult;
+import chronika.xtquant.common.order.entity.*;
 import chronika.xtquant.tradeapi.model.CkApiRequest;
 import chronika.xtquant.tradeapi.model.CkApiResponse;
 import chronika.xtquant.tradeapi.model.reqData.*;
 import chronika.xtquant.tradeapi.model.resData.BatchPlaceOrderResData;
+import chronika.xtquant.tradeapi.model.resData.ManualUpdateOrderResData;
 import chronika.xtquant.tradeapi.model.resData.PlaceOrderResData;
 import chronika.xtquant.tradeapi.model.resData.QueryOrderResData;
+import chronika.xtquant.tradeapi.util.ParamHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,11 +35,7 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/current", method = {RequestMethod.POST})
     public CkApiResponse<QueryOrderResData> queryCurrentOrders(@RequestBody @Valid CkApiRequest<QueryCurrentOrderReqData> requestBody) {
-        QueryCurrentOrderReqData reqData = requestBody.getData();
-        if (reqData == null) {
-            return CkApiResponse.error(CkError.MISSING_PARAM.code, "Missing request 'data' field");
-        }
-
+        QueryCurrentOrderReqData reqData = ParamHelper.getReqDataSafely(requestBody);
         String accountId = reqData.getAccountId();
         List<Integer> status = reqData.getStatus();
         List<Order> orders = orderService.queryCurrentOrders(accountId, status);
@@ -47,15 +45,33 @@ public class OrderController {
         return CkApiResponse.ok(resData);
     }
 
+    @Operation(summary = "Query orders")
+    @ResponseBody
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public CkApiResponse<QueryOrderResData> queryOrders(@RequestBody @Validated CkApiRequest<QueryOrderReqData> requestBody) {
+        QueryOrderReqData reqData = ParamHelper.getReqDataSafely(requestBody);
+        String accountId = reqData.getAccountId();
+        String sid = reqData.getSid();
+        Integer date = reqData.getDate();
+        List<Integer> status = reqData.getStatus();
+        String stockCode = reqData.getStockCode();
+        Pageable pageable = BizUtil.createPageable(reqData.getPageSize(), reqData.getPageNum());
+        Page<Order> pageOrder = orderService.queryOrders(accountId, sid, date, status, stockCode, pageable);
+        QueryOrderResData resData = QueryOrderResData.builder()
+            .orders(pageOrder.getContent())
+            .totalElements(pageOrder.getTotalElements())
+            .totalPages(pageOrder.getTotalPages())
+            .pageSize(pageOrder.getSize())
+            .pageNum(pageOrder.getNumber())
+            .build();
+        return CkApiResponse.ok(resData);
+    }
+
     @Operation(summary = "Place order")
     @ResponseBody
     @RequestMapping(value = "/async-place", method = {RequestMethod.POST})
     public CkApiResponse<PlaceOrderResData> placeOrder(@RequestBody @Valid CkApiRequest<PlaceOrderReqData> requestBody) {
-        PlaceOrderReqData reqData = requestBody.getData();
-        if (reqData == null) {
-            return CkApiResponse.error(CkError.MISSING_PARAM.code, "Missing request 'data' field");
-        }
-
+        PlaceOrderReqData reqData = ParamHelper.getReqDataSafely(requestBody);
         NewOrder order = reqData.getOrder();
         OrderPlacingResult result = orderService.asyncPlaceOrder(order);
         PlaceOrderResData resData = PlaceOrderResData.builder()
@@ -68,11 +84,7 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/async-place-batch", method = {RequestMethod.POST})
     public CkApiResponse<BatchPlaceOrderResData> batchPlaceOrder(@RequestBody @Valid CkApiRequest<BatchPlaceOrderReqData> requestBody) {
-        BatchPlaceOrderReqData reqData = requestBody.getData();
-        if (reqData == null) {
-            return CkApiResponse.error(CkError.MISSING_PARAM.code, "Missing request 'data' field");
-        }
-
+        BatchPlaceOrderReqData reqData = ParamHelper.getReqDataSafely(requestBody);
         List<NewOrder> orders = reqData.getOrders();
         List<OrderPlacingResult> results = orderService.asyncPlaceOrders(orders);
         BatchPlaceOrderResData resData = BatchPlaceOrderResData.builder()
@@ -86,11 +98,7 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/async-cancel", method = {RequestMethod.POST})
     public CkApiResponse<PlaceOrderResData> cancelOrder(@RequestBody @Valid CkApiRequest<CancelOrderReqData> requestBody) {
-        CancelOrderReqData reqData = requestBody.getData();
-        if (reqData == null) {
-            return CkApiResponse.error(CkError.MISSING_PARAM.code, "Missing request 'data' field");
-        }
-
+        CancelOrderReqData reqData = ParamHelper.getReqDataSafely(requestBody);
         CancelOrder order = reqData.getOrder();
         OrderPlacingResult result = orderService.asyncCancelOrder(order);
         PlaceOrderResData resData = PlaceOrderResData.builder()
@@ -103,15 +111,24 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/async-cancel-batch", method = {RequestMethod.POST})
     public CkApiResponse<BatchPlaceOrderResData> batchCancelOrder(@RequestBody @Valid CkApiRequest<BatchCancelOrderReqData> requestBody) {
-        BatchCancelOrderReqData reqData = requestBody.getData();
-        if (reqData == null) {
-            return CkApiResponse.error(CkError.MISSING_PARAM.code, "Missing request 'data' field");
-        }
-
+        BatchCancelOrderReqData reqData = ParamHelper.getReqDataSafely(requestBody);
         List<CancelOrder> orders = reqData.getOrders();
         List<OrderPlacingResult> results = orderService.asyncCancelOrders(orders);
         BatchPlaceOrderResData resData = BatchPlaceOrderResData.builder()
             .results(results)
+            .build();
+        return CkApiResponse.ok(resData);
+    }
+
+    @Operation(summary = "Manual update order")
+    @ResponseBody
+    @RequestMapping(value = "/manual-update", method = {RequestMethod.POST})
+    public CkApiResponse<ManualUpdateOrderResData> manualUpdateOrder(@RequestBody @Validated CkApiRequest<ManualUpdateOrderReqData> requestBody) {
+        ManualUpdateOrderReqData reqData = ParamHelper.getReqDataSafely(requestBody);
+        UpdateOrder updateOrder = reqData.getUpdateOrder();
+        Order updatedOrder = orderService.manualUpdateOrder(updateOrder);
+        ManualUpdateOrderResData resData = ManualUpdateOrderResData.builder()
+            .order(updatedOrder)
             .build();
         return CkApiResponse.ok(resData);
     }

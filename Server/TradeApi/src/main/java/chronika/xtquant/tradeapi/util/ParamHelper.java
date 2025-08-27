@@ -1,5 +1,8 @@
 package chronika.xtquant.tradeapi.util;
 
+import chronika.xtquant.common.infra.enums.CkError;
+import chronika.xtquant.common.infra.exception.CkException;
+import chronika.xtquant.tradeapi.model.CkApiRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ParamHelper {
@@ -18,6 +21,14 @@ public class ParamHelper {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static  <T> T getReqDataSafely(CkApiRequest<T> request) {
+        T ret = request.getData();
+        if (ret == null) {
+            throw new CkException(CkError.MISSING_PARAM, "Missing request 'data' field");
+        }
+        return ret;
     }
 
 }

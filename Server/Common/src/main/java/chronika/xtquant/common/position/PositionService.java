@@ -1,8 +1,11 @@
 package chronika.xtquant.common.position;
 
+import chronika.xtquant.common.infra.param.SortParam;
 import chronika.xtquant.common.position.entity.Position;
 import chronika.xtquant.common.position.repo.PositionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,6 +45,10 @@ public class PositionService {
 
     public List<Position> findByAccountId(String accountId) {
         return positionRepo.findByAccountIdOnLatestDay(accountId);
+    }
+
+    public Page<Position> find(String accountId, Integer date, String stockCode, Pageable pageable) {
+        return positionRepo.find(accountId, date, stockCode, pageable);
     }
 
 }

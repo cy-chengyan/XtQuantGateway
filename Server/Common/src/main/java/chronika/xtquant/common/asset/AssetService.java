@@ -3,7 +3,10 @@ package chronika.xtquant.common.asset;
 import chronika.xtquant.common.asset.entity.Asset;
 import chronika.xtquant.common.asset.repo.AssetRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class AssetService {
@@ -41,6 +44,10 @@ public class AssetService {
 
     public Asset findLatestByAccountId(String accountId) {
         return assetRepo.findLatestByAccountId(accountId);
+    }
+
+    public Page<Asset> find(String accountId, Integer date, Pageable pageable) {
+        return assetRepo.find(accountId, date, pageable);
     }
 
 }

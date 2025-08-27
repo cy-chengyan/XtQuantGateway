@@ -111,7 +111,7 @@ public class Order {
     private Long manualUpdatedAt;
 
     @Schema(description = "备注")
-    @Column(name = "`memo`", updatable = false)
+    @Column(name = "`memo`")
     private String memo;
 
     //

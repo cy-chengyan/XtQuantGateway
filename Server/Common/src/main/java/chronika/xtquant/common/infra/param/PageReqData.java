@@ -16,6 +16,9 @@ public class PageReqData {
     @Min(0)
     private Integer pageNum = 0;
 
+    @Schema(description = "排序")
+    private SortParam sort;
+
     //
     // Constructors
     //
@@ -26,6 +29,13 @@ public class PageReqData {
     public PageReqData(Integer pageSize, Integer pageNum) {
         this.pageSize = pageSize;
         this.pageNum = pageNum;
+        this.sort = null;
+    }
+
+    public PageReqData(Integer pageSize, Integer pageNum, SortParam sort) {
+        this.pageSize = pageSize;
+        this.pageNum = pageNum;
+        this.sort = sort;
     }
 
     //
@@ -46,6 +56,14 @@ public class PageReqData {
 
     public void setPageNum(Integer pageNum) {
         this.pageNum = pageNum;
+    }
+
+    public SortParam getSort() {
+        return sort;
+    }
+
+    public void setSort(SortParam sort) {
+        this.sort = sort;
     }
 
 }

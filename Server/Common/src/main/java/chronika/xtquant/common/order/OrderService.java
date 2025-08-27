@@ -3,18 +3,19 @@ package chronika.xtquant.common.order;
 import chronika.xtquant.common.infra.enums.CkError;
 import chronika.xtquant.common.infra.exception.CkException;
 import chronika.xtquant.common.infra.util.DateUtil;
-import chronika.xtquant.common.order.entity.CancelOrder;
-import chronika.xtquant.common.order.entity.NewOrder;
-import chronika.xtquant.common.order.entity.Order;
-import chronika.xtquant.common.order.entity.OrderPlacingResult;
+import chronika.xtquant.common.order.entity.*;
 import chronika.xtquant.common.order.repo.OrderRepo;
 import chronika.xtquant.common.queue.OrderQueueService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,13 +56,29 @@ public class OrderService {
         return ret;
     }
 
-    public List<Order> queryCurrentOrders(String accountId, List<Integer> status) {
+    public List<Order> queryCurrentOrders(String accountId, List<Integer> orderStatus) {
         int today = DateUtil.currentYmd();
-        if (CollectionUtils.isEmpty(status)) {
+        if (CollectionUtils.isEmpty(orderStatus)) {
             return orderRepo.findOnDay(accountId, today);
         } else {
-            return orderRepo.findOnDayByStatus(accountId, today, status);
+            return orderRepo.findOnDayByStatus(accountId, today, orderStatus);
         }
+    }
+
+    public Page<Order> queryOrders(String accountId, String orderRemark, Integer date, List<Integer> orderStatus, String stockCode, Pageable pageable) {
+        if (!StringUtils.hasLength(accountId)) {
+            accountId = null;
+        }
+        if (!StringUtils.hasLength(orderRemark)) {
+            orderRemark = null;
+        }
+        if (CollectionUtils.isEmpty(orderStatus)) {
+            orderStatus = null;
+        }
+        if (!StringUtils.hasLength(stockCode)) {
+            stockCode = null;
+        }
+        return orderRepo.findAll(accountId, orderRemark, date, orderStatus, stockCode, pageable);
     }
 
     public Order queryByOrderRemark(String orderRemark) {
@@ -221,6 +238,72 @@ public class OrderService {
             results.add(result);
         }
         return results;
+    }
+
+    public Order manualUpdateOrder(UpdateOrder updateOrder) {
+        // 查找定单
+        String orderRemark = updateOrder.getOrderRemark();
+        Order order = orderRepo.findByRemark(orderRemark);
+        if (order == null) {
+            throw new CkException(CkError.RECORD_NOT_FOUND, "Order " + orderRemark + "(remark) not found");
+        }
+
+        boolean needUpdate = false;
+        Integer status = updateOrder.getOrderStatus();
+        if (status != null && status.compareTo(order.getOrderStatus()) != 0) {
+            order.setOrderStatus(status);
+            needUpdate = true;
+        }
+
+        String errorMsg = updateOrder.getErrorMsg();
+        if (errorMsg != null
+            && (order.getErrorMsg() == null || !errorMsg.equals(order.getErrorMsg()))) {
+            order.setErrorMsg(errorMsg);
+            needUpdate = true;
+        }
+
+        BigDecimal price = updateOrder.getPrice();
+        if (price != null && price.compareTo(order.getPrice()) != 0) {
+            order.setPrice(price);
+            needUpdate = true;
+        }
+
+        Long volume = updateOrder.getOrderVolume();
+        if (volume != null && volume.compareTo(order.getOrderVolume()) != 0) {
+            order.setOrderVolume(volume);
+            needUpdate = true;
+        }
+
+        Long tradedVolume = updateOrder.getTradedVolume();
+        if (tradedVolume != null
+            && (order.getTradedVolume() == null || tradedVolume.compareTo(order.getTradedVolume()) != 0)) {
+            order.setTradedVolume(tradedVolume);
+            needUpdate = true;
+        }
+
+        BigDecimal tradedPrice = updateOrder.getTradedPrice();
+        if (tradedPrice != null
+            && (order.getTradedPrice() == null || tradedPrice.compareTo(order.getTradedPrice()) != 0)) {
+            order.setTradedPrice(tradedPrice);
+            needUpdate = true;
+        }
+
+        String memo = updateOrder.getMemo();
+        if (memo != null
+            && (order.getMemo() == null || !memo.equals(order.getMemo()))) {
+            order.setMemo(memo);
+            needUpdate = true;
+        }
+
+        Order ret;
+        if (needUpdate) {
+            Long now = DateUtil.currentMillSecond();
+            order.setManualUpdatedAt(now);
+            ret = orderRepo.save(order);
+        } else {
+            ret = order;
+        }
+        return ret;
     }
 
 }
