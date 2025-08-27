@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Date;
 public class DateUtil {
 
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
+    public static final String YYYYMMDD = "yyyyMMdd";
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     public static final DateTimeFormatter DTF_YYYY_MM_DD = DateTimeFormatter.ofPattern(YYYY_MM_DD);
 
@@ -20,6 +22,14 @@ public class DateUtil {
     public static String formatMillSecondToYmd(long millSecond) {
         Timestamp ts = new Timestamp(millSecond);
         return ts.toLocalDateTime().format(DTF_YYYY_MM_DD);
+    }
+
+    /**
+     * Parse integer date yyyyMMdd to string yyyy-MM-dd
+     */
+    public static String parseIntDateToStr(Integer date) {
+        String s = date.toString();
+        return s.substring(0, 4) + "-" + s.substring(4, 6) + "-" + s.substring(6, 8);
     }
 
     /**
@@ -101,6 +111,10 @@ public class DateUtil {
      */
     public static String currentDatetimeStr(String pattern) {
         return DateFormatUtils.format(new Date(), pattern);
+    }
+
+    public static int currentLocalHour() {
+        return LocalTime.now().getHour();
     }
 
 }

@@ -36,6 +36,8 @@ management:
       enabled: true
 
 xtquant:
+  # 8点之前同步数据, 算前一天的
+  settle-hour: 8
   order-queue: 'xtquant-order-list'
   # feed parsing interval in milliseconds
   feed-parsing-interval: 50

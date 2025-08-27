@@ -24,9 +24,14 @@ spring:
     open-in-view: false
 
   datasource:
-    url: 'jdbc:mysql://home03:3306/xtquant_v2?autoReconnect=true&allowMultiQueries=true'
-    username: 'xtquant'
-    password: '%your_password%'
+    xtquant:
+      url: 'jdbc:mysql://home03:3306/xtquant_v2?autoReconnect=true&allowMultiQueries=true'
+      username: 'xtquant'
+      password: '%your_password%'
+    quotation:
+      url: 'jdbc:mysql://home03:3306/quotation_v1?autoReconnect=true&allowMultiQueries=true'
+      username: 'cButfKEz'
+      password: 's7jgSQn^JB4kIpzm'
 
   data:
     redis:

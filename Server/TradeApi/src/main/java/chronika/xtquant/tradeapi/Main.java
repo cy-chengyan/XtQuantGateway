@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EntityScan({"chronika.xtquant.common"})
-@EnableJpaRepositories({"chronika.xtquant.common"})
-@ComponentScan({"chronika.xtquant.tradeapi", "chronika.xtquant.common", "chronika.xtquant.feedparser"})
+@EntityScan({"chronika.xtquant.common", "chronika.quotation"})
+@EnableJpaRepositories({"chronika.xtquant.common", "chronika.quotation"})
+@ComponentScan({"chronika.xtquant.tradeapi", "chronika.xtquant.common", "chronika.xtquant.feedparser", "chronika.quotation"})
 @SpringBootApplication
 public class Main {
 
