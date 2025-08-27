@@ -1,4 +1,4 @@
-package chronika.quotation.market.enums;
+package kuenlon.quotation.market.enums;
 
 public enum CountryCode {
 

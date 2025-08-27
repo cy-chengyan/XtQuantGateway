@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "chronika.quotation",
+@EnableJpaRepositories(basePackages = "kuenlon.quotation.market",
     entityManagerFactoryRef = "quotationEntityManagerFactory",
     transactionManagerRef = "quotationTransactionManager")
 public class JpaQuotationConfig {
@@ -28,7 +28,7 @@ public class JpaQuotationConfig {
     public LocalContainerEntityManagerFactoryBean quotationEntityManagerFactory(@Qualifier("quotationDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("chronika.quotation");
+        em.setPackagesToScan("kuenlon.quotation.market");
         em.setPersistenceUnitName("quotation");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();

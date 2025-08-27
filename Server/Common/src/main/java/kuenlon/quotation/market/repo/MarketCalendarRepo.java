@@ -1,6 +1,6 @@
-package chronika.quotation.market.repo;
+package kuenlon.quotation.market.repo;
 
-import chronika.quotation.market.entity.MarketCalendar;
+import kuenlon.quotation.market.entity.MarketCalendar;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

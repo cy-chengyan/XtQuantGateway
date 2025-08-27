@@ -1,6 +1,6 @@
-package chronika.quotation.market;
+package kuenlon.quotation.market;
 
-import chronika.quotation.market.entity.Market;
+import kuenlon.quotation.market.entity.Market;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

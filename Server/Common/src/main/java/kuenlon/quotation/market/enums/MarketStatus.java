@@ -1,4 +1,4 @@
-package chronika.quotation.market.enums;
+package kuenlon.quotation.market.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

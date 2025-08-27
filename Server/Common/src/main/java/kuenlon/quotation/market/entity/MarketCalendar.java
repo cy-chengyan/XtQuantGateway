@@ -1,9 +1,9 @@
-package chronika.quotation.market.entity;
+package kuenlon.quotation.market.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import chronika.xtquant.common.infra.converter.JsonToMapConverter;
 import chronika.xtquant.common.infra.util.JsonUtil;
-import chronika.quotation.market.enums.MarketStatus;
+import kuenlon.quotation.market.enums.MarketStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 

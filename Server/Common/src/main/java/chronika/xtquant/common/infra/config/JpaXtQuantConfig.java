@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "chronika.xtquant",
+@EnableJpaRepositories(basePackages = "chronika.xtquant.common",
     entityManagerFactoryRef = "xtQuantEntityManagerFactory",
     transactionManagerRef = "xtQuantTransactionManager")
 public class JpaXtQuantConfig {
@@ -28,7 +28,7 @@ public class JpaXtQuantConfig {
     public LocalContainerEntityManagerFactoryBean xtQuantEntityManagerFactory(@Qualifier("xtQuantDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("chronika.xtquant");
+        em.setPackagesToScan("chronika.xtquant.common");
         em.setPersistenceUnitName("xtquant");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();

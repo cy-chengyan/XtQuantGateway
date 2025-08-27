@@ -1,7 +1,7 @@
-package chronika.quotation.market.entity;
+package kuenlon.quotation.market.entity;
 
 import com.google.common.collect.Lists;
-import chronika.quotation.market.enums.CountryCode;
+import kuenlon.quotation.market.enums.CountryCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
