@@ -23,8 +23,8 @@ import java.util.Objects;
     transactionManagerRef = "xtQuantTransactionManager")
 public class JpaXtQuantConfig {
 
-    @Bean
     @Primary
+    @Bean
     public LocalContainerEntityManagerFactoryBean xtQuantEntityManagerFactory(@Qualifier("xtQuantDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
@@ -41,6 +41,7 @@ public class JpaXtQuantConfig {
         return em;
     }
 
+    @Primary
     @Bean
     public PlatformTransactionManager xtQuantTransactionManager(
         @Qualifier("xtQuantEntityManagerFactory") LocalContainerEntityManagerFactoryBean xtQuantEntityManagerFactory) {

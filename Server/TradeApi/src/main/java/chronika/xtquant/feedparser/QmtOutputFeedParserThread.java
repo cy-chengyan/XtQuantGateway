@@ -1,5 +1,6 @@
 package chronika.xtquant.feedparser;
 
+import chronika.xtquant.common.infra.util.BizUtil;
 import chronika.xtquant.common.infra.util.DateUtil;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +12,22 @@ public class QmtOutputFeedParserThread implements Runnable {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(QmtOutputFeedParserThread.class);
 
+    private final BizUtil bizUtil;
     private final XtQuantOutputFileService xtQuantOutputFileService;
     private final Thread thread;
     private final Long parseInterval;
-    private final Integer settleHour;
+    private final Integer hsyncAtClock;
     private boolean loopFlag = true;
 
     @Autowired
     QmtOutputFeedParserThread(@Value("${xtquant.feed-parsing-interval}") long parseInterval,
-                              @Value("${xtquant.settle-hour}") Integer settleHour,
+                              @Value("${xtquant.hsync-at-clock}") Integer hsyncAtClock,
+                              BizUtil bizUtil,
                               XtQuantOutputFileService xtQuantOutputFileService) {
+        this.bizUtil = bizUtil;
         this.xtQuantOutputFileService = xtQuantOutputFileService;
         this.parseInterval = parseInterval;
-        this.settleHour = settleHour;
+        this.hsyncAtClock = hsyncAtClock;
         thread = new Thread(this);
         thread.start();
     }
@@ -45,8 +49,10 @@ public class QmtOutputFeedParserThread implements Runnable {
 
         while (this.loopFlag) {
             try {
-                xtQuantOutputFileService.loadFeed();
-                if (DateUtil.currentLocalHour() < settleHour) {
+                if (bizUtil.isTradingDay(DateUtil.currentYmd())) {
+                    xtQuantOutputFileService.loadFeed();
+                }
+                if (DateUtil.currentLocalHour() < hsyncAtClock) {
                     Thread.sleep(300000); // 5 minute, 60 * 1000 * 5
                 } else {
                     Thread.sleep(parseInterval);

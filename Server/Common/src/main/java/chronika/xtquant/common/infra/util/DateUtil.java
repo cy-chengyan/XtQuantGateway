@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -71,19 +72,24 @@ public class DateUtil {
     /**
      * Get current date in yyyyMMdd format
      */
-    public static Integer currentYmd() {
-        return Integer.parseInt(currentYmdStr());
+    public static int currentYmd() {
+        // return Integer.parseInt(currentYmdStr()); 效率低
+        LocalDate today = LocalDate.now();
+        return today.getYear() * 10000 + today.getMonthValue() * 100 + today.getDayOfMonth();
     }
 
     public static String currentYmdStr() {
-        return DateFormatUtils.format(new Date(), "yyyyMMdd");
+        // return DateFormatUtils.format(new Date(), "yyyyMMdd"); 效率低
+        return String.valueOf(currentYmd());
     }
 
     /**
      * Get current time in HHmmss format
      */
     public static Integer currentHms() {
-        return Integer.parseInt(currentHmsStr());
+        // return Integer.parseInt(currentHmsStr()); 效率低
+        LocalTime now = LocalTime.now();
+        return now.getHour() * 10000 + now.getMinute() * 100 + now.getSecond();
     }
 
     public static String currentHmsStr() {

@@ -12,6 +12,20 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
     @Bean
+    @ConfigurationProperties("spring.datasource.xtquant")
+    public DataSourceProperties xtQuantDataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    @Primary
+    @Bean
+    public DataSource xtQuantDataSource() {
+        return xtQuantDataSourceProperties()
+            .initializeDataSourceBuilder()
+            .build();
+    }
+
+    @Bean
     @ConfigurationProperties("spring.datasource.quotation")
     public DataSourceProperties quotationDataSourceProperties() {
         return new DataSourceProperties();
@@ -20,20 +34,6 @@ public class DataSourceConfig {
     @Bean
     public DataSource quotationDataSource() {
         return quotationDataSourceProperties()
-            .initializeDataSourceBuilder()
-            .build();
-    }
-
-    @Bean
-    @ConfigurationProperties("spring.datasource.xtquant")
-    public DataSourceProperties xtQuantDataSourceProperties() {
-        return new DataSourceProperties();
-    }
-
-    @Bean
-    @Primary
-    public DataSource xtQuantDataSource() {
-        return xtQuantDataSourceProperties()
             .initializeDataSourceBuilder()
             .build();
     }

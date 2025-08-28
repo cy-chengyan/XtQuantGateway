@@ -1,14 +1,12 @@
 package chronika.xtquant.feedparser;
 
-import kuenlon.quotation.market.MarketCalendarService;
-import kuenlon.quotation.market.entity.Market;
-import kuenlon.quotation.market.entity.MarketCalendar;
 import chronika.xtquant.common.asset.AssetService;
 import chronika.xtquant.common.asset.entity.Asset;
 import chronika.xtquant.common.file.XtQuantFeedFileReader;
 import chronika.xtquant.common.gateway.ServiceStatusService;
 import chronika.xtquant.common.gateway.entity.ServiceStatus;
 import chronika.xtquant.common.infra.misc.CkApp;
+import chronika.xtquant.common.infra.util.BizUtil;
 import chronika.xtquant.common.infra.util.DateUtil;
 import chronika.xtquant.common.order.OrderService;
 import chronika.xtquant.common.order.entity.Order;
@@ -29,6 +27,7 @@ public class XtQuantOutputFileService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(XtQuantOutputFileService.class);
 
     private final CkApp ckApp;
+    private final BizUtil bizUtil;
     private final AssetService assetService;
     private final PositionService positionService;
     private final OrderService orderService;
@@ -41,23 +40,17 @@ public class XtQuantOutputFileService {
 
     private ServiceStatus serviceStatusCache;
     private final ServiceStatusService serviceStatusService;
-    private final MarketCalendarService marketCalendarService;
-
-    private final Integer settleHour;
-    private int today = 0;
-    private MarketCalendar previousTradingDay = null;
 
     @Autowired
     public XtQuantOutputFileService(@Value("${xtquant.feed-dir}") String xtQuantFeedDir,
                                     @Value("${xtquant.feed-finish-flag}") boolean feedFinishFlag,
                                     @Value("${xtquant.feed-rm-dir}") String feedRmDir,
-                                    @Value("${xtquant.settle-hour}") Integer settleHour,
                                     CkApp ckApp,
+                                    BizUtil bizUtil,
                                     AssetService assetService,
                                     PositionService positionService,
                                     OrderService orderService,
-                                    ServiceStatusService serviceStatusService,
-                                    MarketCalendarService marketCalendarService) {
+                                    ServiceStatusService serviceStatusService) {
         if (xtQuantFeedDir != null) {
             xtQuantFeedDir = xtQuantFeedDir.trim();
         }
@@ -84,16 +77,13 @@ public class XtQuantOutputFileService {
         }
 
         this.ckApp = ckApp;
+        this.bizUtil = bizUtil;
         this.assetService = assetService;
         this.positionService = positionService;
         this.orderService = orderService;
 
         this.serviceStatusCache = null;
         this.serviceStatusService = serviceStatusService;
-        this.marketCalendarService = marketCalendarService;
-
-        this.settleHour = settleHour;
-        this.findPreviousTradingDay(DateUtil.currentYmd());
     }
 
     // 解析出 feed 文件的路径
@@ -167,68 +157,45 @@ public class XtQuantOutputFileService {
     public void loadFeed() {
         try {
             if (feedFinishFlag) {
+                Integer date = null;
                 File assetFeedFinFile = new File(assetFeedFinPath);
                 if (assetFeedFinFile.exists()) {
-                    loadAssetFeed();
+                    date = loadAssetFeed(); // 日期从资产记录中取
                     safeDeleteFile(assetFeedPath);
                     safeDeleteFile(assetFeedFinPath);
                 }
                 File positionFeedFinFile = new File(positionFeedFinPath);
                 if (positionFeedFinFile.exists()) {
-                    loadPositionFeed();
+                    if (date != null) { // 只有在资产记录中取到日期, 才去读取持仓记录
+                        loadPositionFeed(date);
+                    }
                     safeDeleteFile(positionFeedPath);
                     safeDeleteFile(positionFeedFinPath);
                 }
                 File orderFeedFinFile = new File(orderFeedFinPath);
                 if (orderFeedFinFile.exists()) {
-                    loadOrderFeed();
+                    if (date != null) { // 只有在资产记录中取到日期, 才去读取定单记录
+                        loadOrderFeed(); // 定单的数据本身就带精准的日期, 直接读
+                    }
                     safeDeleteFile(orderFeedPath);
                     safeDeleteFile(orderFeedFinPath);
                 }
             } else {
-                loadAssetFeed();
-                loadPositionFeed();
-                loadOrderFeed();
+                Integer date = loadAssetFeed(); // 日期从资产记录中取
+                if (date != null) { // 只有在资产记录中取到日期, 才去读取持仓和定单记录
+                    loadPositionFeed(date);
+                    loadOrderFeed(); // 定单的数据本身就带精准的日期, 直接读
+                }
             }
         } catch (Exception e) {
             log.error("Failed to load feed", e);
         }
     }
 
-    private Integer findPreviousTradingDay(int date) {
-        if (this.today != date) {
-            this.today = date;
-            this.previousTradingDay = marketCalendarService.findPreviousOpeningDay(Market.XSHE, this.today);
-        }
-        return this.previousTradingDay != null ? this.previousTradingDay.getDate() : null;
-    }
-
-    private Asset fixAsset(Asset asset) {
-        if (asset == null) {
-            return null;
-        }
-
-        int date = asset.getDate();
-        int today = DateUtil.currentYmd();
-        if (date != today) { // 不是当天的数据, 不处理, 防止赃日期数据
-            return null;
-        }
-
-        // 如果在 n 点之前同步到的数据, 则认为是前一天的收盘数据, 将日期改为前一天
-        int hour = DateUtil.currentLocalHour();
-        if (hour < settleHour) {
-            Integer day = findPreviousTradingDay(date);
-            if (day != null) {
-                asset.setDate(day);
-            }
-        }
-
-        return asset;
-    }
-
-    private void loadAssetFeed() {
+    private Integer loadAssetFeed() {
+        Integer ret = null;
         if (assetFeedPath == null) {
-            return;
+            return ret;
         }
 
         XtQuantFeedFileReader reader = new XtQuantFeedFileReader(assetFeedPath);
@@ -238,9 +205,18 @@ public class XtQuantOutputFileService {
                 continue;
             }
 
-            Asset asset = fixAsset(Asset.createByFeedLine(line));
+            Asset asset = Asset.createByFeedLine(line);
             if (asset != null) {
+                int today = DateUtil.currentYmd();
+                int date = asset.getDate();
+                if (date != today
+                    && date != bizUtil.findPreviousTradingDay(today)) {
+                    log.warn("非当前交易日或前一个交易日的资产记录, 忽略: {}", asset);
+                    continue;
+                }
+
                 assetService.replace(asset);
+                ret = asset.getDate();
             }
 
             ServiceStatus serviceStatus = ServiceStatus.createByFeedLine(ckApp.getId(), line);
@@ -250,26 +226,11 @@ public class XtQuantOutputFileService {
                 this.serviceStatusService.save(serviceStatus);
             }
         }
+
+        return ret;
     }
 
-    private Position fixPosition(Position position) {
-        if (position == null) {
-            return null;
-        }
-
-        // 如果在 n 点之前同步到的数据, 则认为是前一天的收盘数据, 将日期改为前一天
-        int hour = DateUtil.currentLocalHour();
-        if (hour < settleHour) {
-            Integer day = findPreviousTradingDay(position.getDate());
-            if (day != null) {
-                position.setDate(day);
-            }
-        }
-
-        return position;
-    }
-
-    private void loadPositionFeed() {
+    private void loadPositionFeed(int date) {
         if (positionFeedPath == null) {
             return;
         }
@@ -281,7 +242,7 @@ public class XtQuantOutputFileService {
                 continue;
             }
 
-            Position position = fixPosition(Position.createByFeedLine(line));
+            Position position = Position.createByFeedLine(date, line);
             if (position == null) {
                 continue;
             }

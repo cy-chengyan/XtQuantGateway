@@ -2,7 +2,6 @@ package chronika.xtquant.common.position.entity;
 
 import chronika.xtquant.common.infra.misc.Constants;
 import chronika.xtquant.common.infra.util.BizUtil;
-import chronika.xtquant.common.infra.util.DateUtil;
 import chronika.xtquant.common.infra.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -208,9 +207,10 @@ public class Position {
     public Position() {
     }
 
-    public Position(String[] feedLineFields) {
+    public Position(int date, String[] feedLineFields) {
         this.accountId = BizUtil.parseAccountId(feedLineFields[0]);
-        this.date = DateUtil.currentYmd();
+        // this.date = DateUtil.currentYmd();
+        this.date = date;
         this.stockCode = feedLineFields[2] + "." + feedLineFields[1];
         this.volume = Long.parseLong(feedLineFields[3]);
         this.canUseVolume = Long.parseLong(feedLineFields[4]);
@@ -228,13 +228,13 @@ public class Position {
             : new BigDecimal(feedLineFields[10]).setScale(Constants.AssetDecimalPrecision, Constants.FinDecimalRoundingMode);
     }
 
-    public static Position createByFeedLine(String[] lineFields) {
+    public static Position createByFeedLine(int date, String[] lineFields) {
         if (lineFields == null || lineFields.length < 11) {
             return null;
         }
 
         try {
-            return new Position(lineFields);
+            return new Position(date, lineFields);
         } catch (Exception e) {
             log.error("Failed to create Position by fields: {}", e.getMessage(), e);
             return null;

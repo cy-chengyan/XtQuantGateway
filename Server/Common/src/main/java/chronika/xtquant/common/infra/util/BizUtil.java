@@ -3,14 +3,37 @@ package chronika.xtquant.common.infra.util;
 import chronika.xtquant.common.infra.misc.Constants;
 import chronika.xtquant.common.infra.param.PageReqData;
 import chronika.xtquant.common.infra.param.SortParam;
+import kuenlon.quotation.market.MarketCalendarService;
+import kuenlon.quotation.market.entity.Market;
+import kuenlon.quotation.market.entity.MarketCalendar;
+import kuenlon.quotation.market.enums.MarketStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class BizUtil {
+
+    private final MarketCalendarService marketCalendarService;
+
+    private int previousTradingDayParamCache = 0;
+    private MarketCalendar previousTradingDayCache = null;
+
+    private int nextTradingDayParamCache = 0;
+    private MarketCalendar nextTradingDayCache = null;
+
+    private int isTradingDayParamCache = 0;
+    private MarketCalendar isTradingDayCache = null;
+
+    @Autowired
+    public BizUtil(MarketCalendarService marketCalendarService) {
+        this.marketCalendarService = marketCalendarService;
+    }
 
     public static String parseAccountId(String accountKey) {
         // accountKey格式可能如下:
@@ -63,6 +86,35 @@ public class BizUtil {
         return pageReqData == null
             ? createPageable(null, null)
             : createPageable(pageReqData.getPageSize(), pageReqData.getPageNum(), pageReqData.getSort());
+    }
+
+    public Integer findPreviousTradingDay(int date) {
+        if (this.previousTradingDayParamCache != date) {
+            this.previousTradingDayParamCache = date;
+            this.previousTradingDayCache = marketCalendarService.findPreviousOpeningDay(Market.XSHE, this.previousTradingDayParamCache);
+        }
+        return this.previousTradingDayCache == null
+            ? null
+            : this.previousTradingDayCache.getDate();
+    }
+
+    public Integer findNextTradingDay(int date) {
+        if (this.nextTradingDayParamCache != date) {
+            this.nextTradingDayParamCache = date;
+            this.nextTradingDayCache = marketCalendarService.findNextOpeningDay(Market.XSHE, this.nextTradingDayParamCache);
+        }
+        return this.nextTradingDayCache == null
+            ? null
+            : this.nextTradingDayCache.getDate();
+    }
+
+    public boolean isTradingDay(int date) {
+        if (this.isTradingDayParamCache != date) {
+            this.isTradingDayParamCache = date;
+            this.isTradingDayCache = marketCalendarService.findByMarketIdAndDate(Market.XSHE, this.isTradingDayParamCache);
+        }
+        return this.isTradingDayCache != null
+            && (this.isTradingDayCache.getStatus() == MarketStatus.OPEN || this.isTradingDayCache.getStatus() == MarketStatus.EARLY_CLOSE);
     }
 
 }

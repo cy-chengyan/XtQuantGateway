@@ -28,7 +28,7 @@ public class MarketCalendarService {
         return marketCalendarRepo.findByMarketIdAndDateBetween(market.getId(), startAt, endAt);
     }
 
-    public MarketCalendar findByMarketId(Market market, Integer date) {
+    public MarketCalendar findByMarketIdAndDate(Market market, Integer date) {
         return marketCalendarRepo.findByMarketIdAndDate(market.getId(), date);
     }
 
