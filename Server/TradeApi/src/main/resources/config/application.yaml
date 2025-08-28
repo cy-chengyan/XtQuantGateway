@@ -36,8 +36,6 @@ management:
       enabled: true
 
 xtquant:
-  # 在这个小时之前同步数据, 同步频率会放缓
-  hsync-at-clock: 8
   order-queue: 'xtquant-order-list'
   # feed parsing interval in milliseconds
   feed-parsing-interval: 50

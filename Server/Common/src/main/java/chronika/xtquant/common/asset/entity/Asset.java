@@ -20,27 +20,32 @@ public class Asset {
     private Long id;
 
     @Schema(description = "账号ID")
+    @Column(name = "account_id")
     private String accountId;
 
     @Schema(description = "日期")
     private int date;
 
     @Schema(description = "总资产")
+    @Column(name = "total_asset")
     private BigDecimal totalAsset;
 
     @Schema(description = "证券市值")
+    @Column(name = "market_value")
     private BigDecimal marketValue;
 
     @Schema(description = "可用资金")
     private BigDecimal cash;
 
     @Schema(description = "可取资金")
+    @Column(name = "withdrawable_cash")
     private BigDecimal withdrawableCash;
 
     @Schema(description = "盈亏金额")
     private BigDecimal profit;
 
     @Schema(description = "手动更新时间(毫秒)")
+    @Column(name = "manual_update_at")
     private Long manualUpdatedAt;
 
     @Schema(description = "备注")

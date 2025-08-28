@@ -16,18 +16,15 @@ public class QmtOutputFeedParserThread implements Runnable {
     private final XtQuantOutputFileService xtQuantOutputFileService;
     private final Thread thread;
     private final Long parseInterval;
-    private final Integer hsyncAtClock;
     private boolean loopFlag = true;
 
     @Autowired
     QmtOutputFeedParserThread(@Value("${xtquant.feed-parsing-interval}") long parseInterval,
-                              @Value("${xtquant.hsync-at-clock}") Integer hsyncAtClock,
                               BizUtil bizUtil,
                               XtQuantOutputFileService xtQuantOutputFileService) {
         this.bizUtil = bizUtil;
         this.xtQuantOutputFileService = xtQuantOutputFileService;
         this.parseInterval = parseInterval;
-        this.hsyncAtClock = hsyncAtClock;
         thread = new Thread(this);
         thread.start();
     }
@@ -52,8 +49,10 @@ public class QmtOutputFeedParserThread implements Runnable {
                 if (bizUtil.isTradingDay(DateUtil.currentYmd())) {
                     xtQuantOutputFileService.loadFeed();
                 }
-                if (DateUtil.currentLocalHour() < hsyncAtClock) {
-                    Thread.sleep(300000); // 5 minute, 60 * 1000 * 5
+                int h = DateUtil.currentLocalHour();
+                if (h < 8 // 0:00 - 8:00
+                    || h > 16) {  // 16:00 - 24:00
+                    Thread.sleep(300000); // 同步数据的频率降低至: 5 minute, 60 * 1000 * 5
                 } else {
                     Thread.sleep(parseInterval);
                 }

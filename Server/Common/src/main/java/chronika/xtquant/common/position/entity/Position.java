@@ -20,39 +20,48 @@ public class Position {
     private Long id;
 
     @Schema(description = "账号ID")
+    @Column(name = "account_id")
     private String accountId;
 
     @Schema(description = "日期, format: YYYYMMDD")
     private int date;
 
     @Schema(description = "股票代码")
+    @Column(name = "stock_code")
     private String stockCode;
 
     @Schema(description = "持仓数量")
     private Long volume;
 
     @Schema(description = "可用数量")
+    @Column(name = "can_use_volume")
     private Long canUseVolume;
 
     @Schema(description = "冻结数量")
+    @Column(name = "frozen_volume")
     private Long frozenVolume;
 
     @Schema(description = "在途数量")
+    @Column(name = "on_road_volume")
     private Long onRoadVolume;
 
     @Schema(description = "平均建仓成本价")
+    @Column(name = "open_price")
     private BigDecimal openPrice;
 
     @Schema(description = "市价")
+    @Column(name = "market_value")
     private BigDecimal marketValue;
 
     @Schema(description = "昨日持仓数量")
+    @Column(name = "yesterday_volume")
     private Long yesterdayVolume;
 
     @Schema(description = "盈亏")
     private BigDecimal profit;
 
     @Schema(description = "手动更新时间(毫秒)")
+    @Column(name = "manual_update_at")
     private Long manualUpdatedAt;
 
     @Schema(description = "备注")

@@ -24,6 +24,7 @@ public class ServiceStatus {
     private int status;
 
     @Schema(description = "错误信息")
+    @Column(name = "`error_msg`")
     private String errorMsg;
 
     @Schema(description = "更新时间戳(秒)")

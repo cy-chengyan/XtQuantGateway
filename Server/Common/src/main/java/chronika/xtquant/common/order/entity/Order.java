@@ -49,54 +49,69 @@ public class Order {
     private Long id;
 
     @Schema(description = "定单备注(实为下游调用者设定的定单id, 具有唯一性)")
+    @Column(name = "order_remark")
     private String orderRemark;
 
     @Schema(description = "账号ID")
+    @Column(name = "account_id")
     private String accountId;
 
     @Schema(description = "日期, format: YYYYMMDD")
     private int date;
 
     @Schema(description = "股票代码")
+    @Column(name = "stock_code")
     private String stockCode;
 
     @Schema(description = "订单编号")
+    @Column(name = "order_id")
     private Long orderId;
 
     @Schema(description = "委托编号(柜台合同编号)")
+    @Column(name = "order_sys_id")
     private String orderSysId;
 
     @Schema(description = "报单时间, format: HHMMSS")
+    @Column(name = "order_time")
     private String orderTime;
 
     @Schema(description = "定单类型")
+    @Column(name = "order_type")
     private int orderType;
 
     @Schema(description = "定单数量")
+    @Column(name = "order_volume")
     private Long orderVolume;
 
     @Schema(description = "定单价格类型")
+    @Column(name = "price_type")
     private int priceType;
 
     @Schema(description = "定单价格")
     private BigDecimal price;
 
     @Schema(description = "成交数量")
+    @Column(name = "traded_volume")
     private Long tradedVolume;
 
     @Schema(description = "成交均价")
+    @Column(name = "traded_price")
     private BigDecimal tradedPrice;
 
     @Schema(description = "定单状态")
+    @Column(name = "order_status")
     private int orderStatus;
 
     @Schema(description = "已撤单数量")
+    @Column(name = "canceled_volume")
     private Long canceledVolume;
 
     @Schema(description = "策略名称")
+    @Column(name = "strategy_name")
     private String strategyName;
 
     @Schema(description = "错误信息(废单原因)")
+    @Column(name = "error_msg")
     private String errorMsg;
 
     @Schema(description = "记录创建时间戳(秒)")
@@ -108,6 +123,7 @@ public class Order {
     private Timestamp updatedAt;
 
     @Schema(description = "手动更新时间(毫秒)")
+    @Column(name = "manual_updated_at")
     private Long manualUpdatedAt;
 
     @Schema(description = "备注")
