@@ -61,7 +61,7 @@ public class Position {
     private BigDecimal profit;
 
     @Schema(description = "手动更新时间(毫秒)")
-    @Column(name = "manual_update_at")
+    @Column(name = "manual_updated_at")
     private Long manualUpdatedAt;
 
     @Schema(description = "备注")

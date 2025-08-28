@@ -52,7 +52,7 @@ public class QmtOutputFeedParserThread implements Runnable {
                 int h = DateUtil.currentLocalHour();
                 if (h < 8 // 0:00 - 8:00
                     || h > 16) {  // 16:00 - 24:00
-                    Thread.sleep(300000); // 同步数据的频率降低至: 5 minute, 60 * 1000 * 5
+                    Thread.sleep(30000); // 同步数据的频率降低至: 30秒一次
                 } else {
                     Thread.sleep(parseInterval);
                 }
