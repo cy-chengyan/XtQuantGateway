@@ -184,7 +184,7 @@ public class Asset {
         }
 
         if (!lineFields[8].equals("登录成功")) {
-            log.info("Account status: {}", lineFields[8]);
+            // log.info("Account status: {}", lineFields[8]);
             return null;
         }
 

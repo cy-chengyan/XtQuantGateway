@@ -222,6 +222,7 @@ public class XtQuantOutputFileService {
             ServiceStatus serviceStatus = ServiceStatus.createByFeedLine(ckApp.getId(), line);
             if (this.serviceStatusCache == null
                 || !this.serviceStatusCache.equals(serviceStatus)) {
+                log.info("终端当前状态: {}", serviceStatus.getErrorMsg());
                 this.serviceStatusCache = serviceStatus;
                 this.serviceStatusService.save(serviceStatus);
             }
